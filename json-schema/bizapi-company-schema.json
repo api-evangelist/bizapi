@@ -1,0 +1,159 @@
+{
+  "$id": "bizapi-company-schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BizAPI Company",
+  "description": "A business entity record returned by the BizAPI Business Intelligence API, containing firmographic data including identification numbers, industry codes, address, contact information, financial indicators, and corporate hierarchy details.",
+  "type": "object",
+  "properties": {
+    "duns_number": {
+      "type": "string",
+      "description": "DUNS number uniquely identifying the business entity."
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Legal name of the company."
+    },
+    "dba": {
+      "type": "string",
+      "description": "Doing-business-as (trade) name."
+    },
+    "sic_code_4": {
+      "type": "string",
+      "description": "4-digit Standard Industrial Classification code.",
+      "pattern": "^[0-9]{4}$"
+    },
+    "sic_code_8": {
+      "type": "string",
+      "description": "8-digit Standard Industrial Classification code.",
+      "pattern": "^[0-9]{8}$"
+    },
+    "naics_code_6": {
+      "type": "string",
+      "description": "6-digit North American Industry Classification System code.",
+      "pattern": "^[0-9]{6}$"
+    },
+    "street": {
+      "type": "string",
+      "description": "Street address of the business location."
+    },
+    "city": {
+      "type": "string",
+      "description": "City of the business location."
+    },
+    "state": {
+      "type": "string",
+      "description": "State or province of the business location."
+    },
+    "zip": {
+      "type": "string",
+      "description": "ZIP or postal code of the business location."
+    },
+    "country": {
+      "type": "string",
+      "description": "Country of the business location."
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude coordinate of the business location.",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude coordinate of the business location.",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "phone": {
+      "type": "string",
+      "description": "Primary phone number."
+    },
+    "fax": {
+      "type": "string",
+      "description": "Fax number."
+    },
+    "email": {
+      "type": "string",
+      "description": "Primary contact email address.",
+      "format": "email"
+    },
+    "url": {
+      "type": "string",
+      "description": "Company website URL.",
+      "format": "uri"
+    },
+    "stock_ticker": {
+      "type": "string",
+      "description": "Stock exchange ticker symbol."
+    },
+    "top_contact_name": {
+      "type": "string",
+      "description": "Name of the top contact at the company."
+    },
+    "top_contact_title": {
+      "type": "string",
+      "description": "Title of the top contact at the company."
+    },
+    "sales_volume": {
+      "type": "string",
+      "description": "Annual sales volume."
+    },
+    "total_employees": {
+      "type": "string",
+      "description": "Total number of employees."
+    },
+    "employees_on_site": {
+      "type": "string",
+      "description": "Number of employees at this location."
+    },
+    "year_started": {
+      "type": "string",
+      "description": "Year the company was established.",
+      "pattern": "^[0-9]{4}$"
+    },
+    "location_type": {
+      "type": "string",
+      "description": "Location type indicator.",
+      "enum": ["HQ", "Branch", "SL"]
+    },
+    "subsidiary_indicator": {
+      "type": "string",
+      "description": "Subsidiary status indicator."
+    },
+    "parent_duns": {
+      "type": "string",
+      "description": "DUNS number of the parent company."
+    },
+    "parent_name": {
+      "type": "string",
+      "description": "Name of the parent company."
+    },
+    "domestic_ultimate_duns": {
+      "type": "string",
+      "description": "DUNS number of the domestic ultimate parent."
+    },
+    "domestic_ultimate_name": {
+      "type": "string",
+      "description": "Name of the domestic ultimate parent."
+    },
+    "global_ultimate_duns": {
+      "type": "string",
+      "description": "DUNS number of the global ultimate parent."
+    },
+    "global_ultimate_name": {
+      "type": "string",
+      "description": "Name of the global ultimate parent."
+    },
+    "hierarchy_code": {
+      "type": "string",
+      "description": "Corporate hierarchy code."
+    },
+    "family_member_count": {
+      "type": "string",
+      "description": "Number of family members in the corporate hierarchy."
+    }
+  },
+  "required": [
+    "company_name"
+  ]
+}

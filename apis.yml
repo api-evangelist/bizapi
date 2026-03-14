@@ -12,6 +12,10 @@ apis:
         type: Documentation
       - url: openapi/bizapi-business-intelligence-api-openapi.yml
         type: OpenAPI
+      - url: json-schema/bizapi-company-schema.json
+        type: JSONSchema
+      - url: json-ld/bizapi-context.jsonld
+        type: JSONLD
     description: >-
       Business Intelligence APIIntegrate our Business Intelligence API to
       seamlessly append Vital data to your Customer Acquisition Efforts. 
