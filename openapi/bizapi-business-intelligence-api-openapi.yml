@@ -1,0 +1,202 @@
+openapi: 3.1.0
+info:
+  title: BizAPI Business Intelligence API
+  description: >-
+    Real-time REST API from the NAICS Association that returns firmographic
+    data on over 220 million US and international business entities including
+    DUNS numbers, SIC codes, NAICS codes, company details, and corporate
+    hierarchy information.
+  version: '1.0'
+  contact:
+    name: NAICS Association
+    url: https://www.naics.com
+externalDocs:
+  description: BizAPI Documentation
+  url: https://www.naics.com/business-intelligence-api/
+servers:
+  - url: https://www.naics.com/wp-json/naicsapi/v1
+    description: Production Server
+tags:
+  - name: Company Search
+    description: Search for business entity firmographic data
+security:
+  - basicAuth: []
+paths:
+  /cosearch:
+    post:
+      operationId: searchCompanies
+      summary: Live company search
+      description: >-
+        Search for business entities and retrieve firmographic data including
+        DUNS numbers, SIC codes, NAICS codes, company details, sales volume,
+        employee counts, and corporate hierarchy information. Rate limited to
+        3 requests per rolling second.
+      tags:
+        - Company Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanySearchRequest'
+      responses:
+        '200':
+          description: Successful search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanySearchResponse'
+        '401':
+          description: Unauthorized - invalid credentials
+        '429':
+          description: Rate limit exceeded - maximum 3 requests per rolling second
+  /cosearchtest:
+    post:
+      operationId: searchCompaniesTest
+      summary: Test company search
+      description: >-
+        Test endpoint that returns fake data without consuming API credits.
+        Accepts the same parameters as the live search endpoint.
+      tags:
+        - Company Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanySearchRequest'
+      responses:
+        '200':
+          description: Test search results with fake data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanySearchResponse'
+        '401':
+          description: Unauthorized - invalid credentials
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: >-
+        HTTP Basic Authentication using credentials provided during account
+        activation.
+  schemas:
+    CompanySearchRequest:
+      type: object
+      properties:
+        company_name:
+          type: string
+          description: Name of the company to search for
+        street:
+          type: string
+          description: Street address
+        city:
+          type: string
+          description: City name
+        state:
+          type: string
+          description: State or province
+        zip:
+          type: string
+          description: ZIP or postal code
+        country:
+          type: string
+          description: Country name or code
+        phone:
+          type: string
+          description: Phone number
+        url:
+          type: string
+          description: Company website URL
+    CompanySearchResponse:
+      type: object
+      properties:
+        duns_number:
+          type: string
+          description: DUNS number
+        company_name:
+          type: string
+          description: Company name
+        dba:
+          type: string
+          description: Doing business as name
+        sic_code_4:
+          type: string
+          description: 4-digit SIC code
+        sic_code_8:
+          type: string
+          description: 8-digit SIC code
+        naics_code_6:
+          type: string
+          description: 6-digit NAICS code
+        street:
+          type: string
+          description: Street address
+        city:
+          type: string
+          description: City
+        state:
+          type: string
+          description: State or province
+        zip:
+          type: string
+          description: ZIP or postal code
+        country:
+          type: string
+          description: Country
+        phone:
+          type: string
+          description: Phone number
+        url:
+          type: string
+          description: Company website URL
+        top_contact_name:
+          type: string
+          description: Name of top contact
+        top_contact_title:
+          type: string
+          description: Title of top contact
+        sales_volume:
+          type: string
+          description: Annual sales volume
+        total_employees:
+          type: string
+          description: Total number of employees
+        employees_on_site:
+          type: string
+          description: Number of employees at this location
+        year_started:
+          type: string
+          description: Year the company was established
+        location_type:
+          type: string
+          description: Location type (HQ, Branch, or SL)
+        subsidiary_indicator:
+          type: string
+          description: Subsidiary status indicator
+        parent_duns:
+          type: string
+          description: Parent company DUNS number
+        parent_name:
+          type: string
+          description: Parent company name
+        domestic_ultimate_duns:
+          type: string
+          description: Domestic ultimate parent DUNS number
+        domestic_ultimate_name:
+          type: string
+          description: Domestic ultimate parent name
+        global_ultimate_duns:
+          type: string
+          description: Global ultimate parent DUNS number
+        global_ultimate_name:
+          type: string
+          description: Global ultimate parent name
+        hierarchy_code:
+          type: string
+          description: Corporate hierarchy code
+        family_member_count:
+          type: string
+          description: Number of family members in corporate hierarchy

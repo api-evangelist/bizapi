@@ -10,6 +10,8 @@ apis:
     properties:
       - url: ' https://www.naics.com/business-intelligence-api/'
         type: Documentation
+      - url: openapi/bizapi-business-intelligence-api-openapi.yml
+        type: OpenAPI
     description: >-
       Business Intelligence APIIntegrate our Business Intelligence API to
       seamlessly append Vital data to your Customer Acquisition Efforts. 
@@ -21,7 +23,7 @@ type: Contract
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
 created: '2025-02-24'
-modified: '2025-02-24'
+modified: '2026-03-14'
 position: Consuming
 description: >-
   BizAPI is a powerful tool that allows businesses to seamlessly integrate and
