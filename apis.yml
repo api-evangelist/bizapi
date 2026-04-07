@@ -4,8 +4,7 @@ url: >-
 apis:
   - aid: bizapi:bizapi
     name: BizAPI
-    tags:
-      - API
+    tags: []
     humanURL: ' https://www.naics.com/business-intelligence-api/'
     properties:
       - url: ' https://www.naics.com/business-intelligence-api/'
