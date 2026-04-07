@@ -17,8 +17,8 @@ apis:
       - url: json-ld/bizapi-context.jsonld
         type: JSONLD
     description: >-
-      Business Intelligence APIIntegrate our Business Intelligence API to
-      seamlessly append Vital data to your Customer Acquisition Efforts. 
+      Business Intelligence APIIntegrate our Business Intelligence API to seamlessly
+      append Vital data to your Customer Acquisition Efforts.
 name: BizAPI
 tags:
   - Automation
@@ -30,15 +30,11 @@ created: '2025-02-24'
 modified: '2026-03-16'
 position: Consuming
 description: >-
-  BizAPI is a powerful tool that allows businesses to seamlessly integrate and
-  automate their workflows. With BizAPI, businesses can easily connect various
-  applications and systems, enabling them to streamline processes and improve
-  efficiency. By leveraging BizAPI, companies can automate data transfers,
-  synchronize information across platforms, and eliminate manual tasks. This
-  innovative solution empowers businesses to focus on value-added activities,
-  enhance collaboration, and ultimately drive growth. Whether it's connecting
-  CRM systems, marketing platforms, or finance software, BizAPI offers a
-  flexible and scalable solution to meet the unique needs of any organization.
+  BizAPI is a powerful tool that allows businesses to seamlessly integrate and automate
+  their workflows. With BizAPI, businesses can easily connect various applications
+  and systems, enabling them to streamline processes and improve efficiency. By leveraging
+  BizAPI, companies can automate data transfers, synchronize information across platforms,
+  and eliminate manual tasks.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
