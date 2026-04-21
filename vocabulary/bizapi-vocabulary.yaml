@@ -1,0 +1,183 @@
+vocabulary: "1.0.0"
+
+info:
+  provider: BizAPI
+  description: Unified taxonomy mapping operational and capability dimensions of the BizAPI Business Intelligence API from the NAICS Association.
+  created: "2026-04-19"
+  modified: "2026-04-19"
+
+operational:
+  apis:
+    - namespace: bizapi
+      version: "1.0"
+      baseUrl: https://www.naics.com/wp-json/naicsapi/v1
+      status: active
+      description: Real-time firmographic data API
+
+  resources:
+    - name: companies
+      description: Business entity records with firmographic data
+      api: bizapi
+      actions:
+        - search
+        - search-test
+
+  actions:
+    - name: search
+      description: Submit a company search query to retrieve matching firmographic records
+      httpMethod: POST
+      pattern: query
+    - name: search-test
+      description: Submit a test company search returning fake data without consuming credits
+      httpMethod: POST
+      pattern: query
+
+  schemas:
+    core:
+      - name: CompanySearchRequest
+        description: Request payload for company search containing name, address, phone, and URL filters
+        key_properties:
+          - company_name
+          - street
+          - city
+          - state
+          - zip
+          - country
+          - phone
+          - url
+      - name: CompanySearchResponse
+        description: Firmographic response record with identification, address, contact, financial, and hierarchy fields
+        key_properties:
+          - duns_number
+          - company_name
+          - naics_code_6
+          - sic_code_4
+          - sic_code_8
+          - sales_volume
+          - total_employees
+          - location_type
+          - parent_duns
+          - global_ultimate_duns
+
+  parameters:
+    filters:
+      - name: company_name
+        description: Company name to search
+        type: string
+      - name: street
+        description: Street address filter
+        type: string
+      - name: city
+        description: City filter
+        type: string
+      - name: state
+        description: State or province filter
+        type: string
+      - name: zip
+        description: ZIP or postal code filter
+        type: string
+      - name: country
+        description: Country filter
+        type: string
+      - name: phone
+        description: Phone number filter
+        type: string
+      - name: url
+        description: Company website URL filter
+        type: string
+
+  enums:
+    locationTypes:
+      - value: HQ
+        description: Headquarters location
+      - value: Branch
+        description: Branch office location
+      - value: SL
+        description: Single location (not part of a hierarchy)
+
+  authentication:
+    schemes:
+      - type: basic
+        description: HTTP Basic Authentication with username and password provided at account activation
+        apis:
+          - bizapi
+
+capability:
+  workflows:
+    - name: BizAPI Business Intelligence
+      file: capabilities/bizapi-business-intelligence.yaml
+      description: Business intelligence and CRM enrichment workflow combining company search and test endpoints
+      apis:
+        - BizAPI Business Intelligence API
+      tools: 2
+      personas:
+        - Sales Representative
+        - Marketing Analyst
+        - Data Engineer
+      domains:
+        - Business Intelligence
+        - CRM Enrichment
+
+  personas:
+    - id: sales-representative
+      name: Sales Representative
+      description: Uses firmographic data to qualify leads and enrich CRM account records
+      workflows:
+        - BizAPI Business Intelligence
+    - id: marketing-analyst
+      name: Marketing Analyst
+      description: Segments and scores prospects using NAICS, SIC, and financial data
+      workflows:
+        - BizAPI Business Intelligence
+    - id: data-engineer
+      name: Data Engineer
+      description: Integrates BizAPI into data pipelines for CRM and data warehouse enrichment
+      workflows:
+        - BizAPI Business Intelligence
+
+  domains:
+    - name: Business Intelligence
+      description: Firmographic data retrieval and company lookup
+      resources:
+        - companies
+      workflows:
+        - BizAPI Business Intelligence
+    - name: CRM Enrichment
+      description: Appending firmographic data to CRM records for sales and marketing
+      resources:
+        - companies
+      workflows:
+        - BizAPI Business Intelligence
+
+  namespaces:
+    - name: bizapi
+      type: consumed
+      baseUri: https://www.naics.com/wp-json/naicsapi/v1
+    - name: bizapi-business-intelligence-api
+      type: rest-exposed
+      port: 8080
+    - name: bizapi-business-intelligence-mcp
+      type: mcp-exposed
+      port: 9090
+
+  binds:
+    - name: BIZAPI_USERNAME
+      description: HTTP Basic Authentication username for BizAPI
+      workflows:
+        - BizAPI Business Intelligence
+    - name: BIZAPI_PASSWORD
+      description: HTTP Basic Authentication password for BizAPI
+      workflows:
+        - BizAPI Business Intelligence
+
+crossReference:
+  - resource: companies
+    operations:
+      - search
+      - search-test
+    workflows:
+      - BizAPI Business Intelligence
+    personas:
+      - Sales Representative
+      - Marketing Analyst
+      - Data Engineer

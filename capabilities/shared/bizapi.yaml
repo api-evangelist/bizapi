@@ -1,0 +1,141 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: BizAPI Business Intelligence API
+  description: Real-time firmographic data on over 220 million US and international business entities including DUNS, NAICS, SIC, company details, and corporate hierarchy.
+  tags:
+    - Business Intelligence
+    - Company Data
+    - Firmographic Data
+    - NAICS
+  created: "2026-04-19"
+  modified: "2026-04-19"
+
+binds:
+  - namespace: env
+    keys:
+      BIZAPI_USERNAME: BIZAPI_USERNAME
+      BIZAPI_PASSWORD: BIZAPI_PASSWORD
+
+capability:
+  consumes:
+    - type: http
+      namespace: bizapi
+      baseUri: https://www.naics.com/wp-json/naicsapi/v1
+      description: Real-time firmographic data API for business entity lookup and enrichment.
+      authentication:
+        type: basic
+        username: "{{BIZAPI_USERNAME}}"
+        password: "{{BIZAPI_PASSWORD}}"
+      resources:
+        - name: company-search
+          path: /cosearch
+          description: Search for business entities and retrieve firmographic data.
+          operations:
+            - name: search-companies
+              method: POST
+              description: Search for business entities and retrieve firmographic data including DUNS, NAICS, SIC codes, contact info, and corporate hierarchy.
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+              body:
+                type: json
+                data:
+                  company_name: "{{tools.company_name}}"
+                  street: "{{tools.street}}"
+                  city: "{{tools.city}}"
+                  state: "{{tools.state}}"
+                  zip: "{{tools.zip}}"
+                  country: "{{tools.country}}"
+                  phone: "{{tools.phone}}"
+                  url: "{{tools.url}}"
+
+        - name: company-search-test
+          path: /cosearchtest
+          description: Test endpoint returning fake data without consuming API credits.
+          operations:
+            - name: search-companies-test
+              method: POST
+              description: Test company search that returns fake data without consuming API credits.
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+              body:
+                type: json
+                data:
+                  company_name: "{{tools.company_name}}"
+                  street: "{{tools.street}}"
+                  city: "{{tools.city}}"
+                  state: "{{tools.state}}"
+                  zip: "{{tools.zip}}"
+                  country: "{{tools.country}}"
+
+  exposes:
+    - type: rest
+      port: 8100
+      namespace: bizapi-rest
+      resources:
+        - path: /v1/companies/search
+          name: company-search
+          description: Search for business entities
+          operations:
+            - method: POST
+              name: search-companies
+              description: Search companies by name, address, phone, or URL
+              call: "bizapi.search-companies"
+              with:
+                company_name: "rest.company_name"
+                city: "rest.city"
+                state: "rest.state"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+        - path: /v1/companies/search/test
+          name: company-search-test
+          description: Test company search with fake data
+          operations:
+            - method: POST
+              name: search-companies-test
+              description: Test company search returning fake firmographic data
+              call: "bizapi.search-companies-test"
+              with:
+                company_name: "rest.company_name"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9100
+      namespace: bizapi-mcp
+      transport: http
+      tools:
+        - name: search-companies
+          description: Search for business entities and retrieve firmographic data including DUNS, NAICS, SIC codes, company details, and corporate hierarchy.
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "bizapi.search-companies"
+          with:
+            company_name: "tools.company_name"
+            city: "tools.city"
+            state: "tools.state"
+            zip: "tools.zip"
+            country: "tools.country"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: search-companies-test
+          description: Test company search that returns fake firmographic data without consuming API credits.
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "bizapi.search-companies-test"
+          with:
+            company_name: "tools.company_name"
+          outputParameters:
+            - type: object
+              mapping: "$."

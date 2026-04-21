@@ -1,0 +1,306 @@
+# BizAPI Spectral Ruleset
+# Enforces conventions observed in the BizAPI Business Intelligence API OpenAPI specification.
+
+rules:
+
+  # INFO / METADATA
+  info-title-prefix:
+    description: API title must start with "BizAPI"
+    message: 'Info title must start with "BizAPI" — got "{{value}}"'
+    severity: warn
+    given: '$.info.title'
+    then:
+      function: pattern
+      functionOptions:
+        match: '^BizAPI'
+
+  info-description-required:
+    description: Info object must have a description
+    severity: error
+    given: '$.info'
+    then:
+      field: description
+      function: truthy
+
+  info-version-required:
+    description: Info object must have a version
+    severity: error
+    given: '$.info'
+    then:
+      field: version
+      function: truthy
+
+  info-contact-required:
+    description: Info object should have contact information
+    severity: warn
+    given: '$.info'
+    then:
+      field: contact
+      function: truthy
+
+  # OPENAPI VERSION
+  openapi-version:
+    description: Must use OpenAPI 3.x
+    severity: error
+    given: '$'
+    then:
+      field: openapi
+      function: pattern
+      functionOptions:
+        match: '^3\.'
+
+  # SERVERS
+  servers-defined:
+    description: At least one server must be defined
+    severity: error
+    given: '$'
+    then:
+      field: servers
+      function: truthy
+
+  servers-https:
+    description: Server URLs must use HTTPS
+    severity: error
+    given: '$.servers[*].url'
+    then:
+      function: pattern
+      functionOptions:
+        match: '^https://'
+
+  # PATHS — NAMING CONVENTIONS
+  paths-kebab-case:
+    description: Path segments must use kebab-case or lowercase
+    severity: warn
+    given: '$.paths[*]~'
+    then:
+      function: pattern
+      functionOptions:
+        match: '^(/[a-z0-9-]+)+$'
+
+  paths-no-trailing-slash:
+    description: Paths must not have trailing slashes
+    severity: warn
+    given: '$.paths[*]~'
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: '/$'
+
+  # OPERATIONS
+  operation-summary-required:
+    description: Every operation must have a summary
+    severity: error
+    given: '$.paths[*][get,post,put,patch,delete,options,head]'
+    then:
+      field: summary
+      function: truthy
+
+  operation-summary-prefix:
+    description: Operation summaries must start with "BizAPI"
+    message: 'Operation summary must start with "BizAPI" — got "{{value}}"'
+    severity: warn
+    given: '$.paths[*][get,post,put,patch,delete].summary'
+    then:
+      function: pattern
+      functionOptions:
+        match: '^BizAPI'
+
+  operation-description-required:
+    description: Every operation must have a description
+    severity: warn
+    given: '$.paths[*][get,post,put,patch,delete,options,head]'
+    then:
+      field: description
+      function: truthy
+
+  operation-id-required:
+    description: Every operation must have an operationId
+    severity: error
+    given: '$.paths[*][get,post,put,patch,delete,options,head]'
+    then:
+      field: operationId
+      function: truthy
+
+  operation-id-camel-case:
+    description: operationId must use camelCase
+    severity: warn
+    given: '$.paths[*][get,post,put,patch,delete].operationId'
+    then:
+      function: pattern
+      functionOptions:
+        match: '^[a-z][a-zA-Z0-9]+$'
+
+  operation-tags-required:
+    description: Every operation must have at least one tag
+    severity: warn
+    given: '$.paths[*][get,post,put,patch,delete,options,head]'
+    then:
+      field: tags
+      function: truthy
+
+  # PARAMETERS
+  parameter-description-required:
+    description: Every parameter must have a description
+    severity: warn
+    given: '$.paths[*][get,post,put,patch,delete].parameters[*]'
+    then:
+      field: description
+      function: truthy
+
+  parameter-schema-required:
+    description: Every parameter must define a schema
+    severity: error
+    given: '$.paths[*][get,post,put,patch,delete].parameters[*]'
+    then:
+      field: schema
+      function: truthy
+
+  # REQUEST BODIES
+  request-body-description:
+    description: Request bodies should have a description
+    severity: info
+    given: '$.paths[*][post,put,patch].requestBody'
+    then:
+      field: description
+      function: truthy
+
+  request-body-json:
+    description: Request bodies must support application/json content type
+    severity: warn
+    given: '$.paths[*][post,put,patch].requestBody.content'
+    then:
+      field: application/json
+      function: truthy
+
+  # RESPONSES
+  response-success-required:
+    description: Every operation must define at least one 2xx response
+    severity: error
+    given: '$.paths[*][get,post,put,patch,delete]'
+    then:
+      field: responses
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          patternProperties:
+            '^2[0-9]{2}$': {}
+          minProperties: 1
+
+  response-401-defined:
+    description: Operations using authentication should define a 401 response
+    severity: warn
+    given: '$.paths[*][post]'
+    then:
+      field: responses
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          required: ['401']
+
+  response-429-defined:
+    description: Operations should define a 429 rate-limit response
+    severity: info
+    given: '$.paths[*][post]'
+    then:
+      field: responses
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          required: ['429']
+
+  response-description-required:
+    description: Every response must have a description
+    severity: error
+    given: '$.paths[*][get,post,put,patch,delete].responses[*]'
+    then:
+      field: description
+      function: truthy
+
+  # SCHEMAS — PROPERTY NAMING
+  schema-property-snake-case:
+    description: Schema property names must use snake_case
+    severity: warn
+    given: '$.components.schemas[*].properties[*]~'
+    then:
+      function: pattern
+      functionOptions:
+        match: '^[a-z][a-z0-9_]*$'
+
+  schema-description-required:
+    description: Top-level schemas must have a description
+    severity: warn
+    given: '$.components.schemas[*]'
+    then:
+      field: description
+      function: truthy
+
+  schema-properties-description:
+    description: Schema properties should have descriptions
+    severity: info
+    given: '$.components.schemas[*].properties[*]'
+    then:
+      field: description
+      function: truthy
+
+  # SECURITY
+  security-schemes-defined:
+    description: At least one security scheme must be defined in components
+    severity: error
+    given: '$.components'
+    then:
+      field: securitySchemes
+      function: truthy
+
+  security-global-defined:
+    description: Global security must be defined
+    severity: warn
+    given: '$'
+    then:
+      field: security
+      function: truthy
+
+  # HTTP METHOD CONVENTIONS
+  post-has-request-body:
+    description: POST operations should have a request body
+    severity: warn
+    given: '$.paths[*].post'
+    then:
+      field: requestBody
+      function: truthy
+
+  get-no-request-body:
+    description: GET operations must not have a request body
+    severity: error
+    given: '$.paths[*].get'
+    then:
+      field: requestBody
+      function: falsy
+
+  # GENERAL QUALITY
+  no-empty-descriptions:
+    description: Descriptions must not be empty strings
+    severity: error
+    given: '$..description'
+    then:
+      function: pattern
+      functionOptions:
+        match: '.+'
+
+  examples-encouraged:
+    description: Schema properties should have examples
+    severity: info
+    given: '$.components.schemas[*].properties[*]'
+    then:
+      field: example
+      function: truthy
+
+  tags-global-defined:
+    description: Global tags array should be defined
+    severity: info
+    given: '$'
+    then:
+      field: tags
+      function: truthy

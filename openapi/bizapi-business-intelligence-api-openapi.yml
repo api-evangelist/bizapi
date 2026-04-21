@@ -14,31 +14,44 @@ externalDocs:
   description: BizAPI Documentation
   url: https://www.naics.com/business-intelligence-api/
 servers:
-  - url: https://www.naics.com/wp-json/naicsapi/v1
-    description: Production Server
+- url: https://www.naics.com/wp-json/naicsapi/v1
+  description: Production Server
 tags:
-  - name: Company Search
-    description: Search for business entity firmographic data
+- name: Company Search
+  description: Search for business entity firmographic data
 security:
-  - basicAuth: []
+- basicAuth: []
 paths:
   /cosearch:
     post:
       operationId: searchCompanies
-      summary: BizAPI Live company search
+      summary: BizAPI Live Company Search
       description: >-
         Search for business entities and retrieve firmographic data including
         DUNS numbers, SIC codes, NAICS codes, company details, sales volume,
         employee counts, and corporate hierarchy information. Rate limited to
         3 requests per rolling second.
       tags:
-        - Company Search
+      - Company Search
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CompanySearchRequest'
+            examples:
+              SearchCompaniesRequestExample:
+                summary: Default searchCompanies request
+                x-microcks-default: true
+                value:
+                  company_name: Acme Corporation
+                  street: 123 Main Street
+                  city: San Francisco
+                  state: CA
+                  zip: '94105'
+                  country: US
+                  phone: +1-555-555-0100
+                  url: https://example.com
       responses:
         '200':
           description: Successful search results
@@ -46,25 +59,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CompanySearchResponse'
+              examples:
+                SearchCompanies200Example:
+                  summary: Default searchCompanies 200 response
+                  x-microcks-default: true
+                  value:
+                    duns_number: '123456789'
+                    company_name: Acme Corporation
+                    dba: example-value
+                    sic_code_4: '7372'
+                    sic_code_8: '7372'
+                    naics_code_6: '511210'
+                    street: 123 Main Street
+                    city: San Francisco
+                    state: CA
+                    zip: '94105'
+                    country: US
+                    phone: +1-555-555-0100
+                    url: https://example.com
+                    top_contact_name: Acme Corporation
+                    top_contact_title: Chief Executive Officer
+                    sales_volume: '5000000'
+                    total_employees: '250'
+                    employees_on_site: '250'
+                    year_started: '2005'
+                    location_type: HQ
+                    subsidiary_indicator: N
+                    parent_duns: '123456789'
+                    parent_name: Acme Corporation
+                    domestic_ultimate_duns: '123456789'
+                    domestic_ultimate_name: Acme Corporation
+                    global_ultimate_duns: '123456789'
+                    global_ultimate_name: Acme Corporation
+                    hierarchy_code: HQ
+                    family_member_count: '3'
         '401':
           description: Unauthorized - invalid credentials
         '429':
           description: Rate limit exceeded - maximum 3 requests per rolling second
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /cosearchtest:
     post:
       operationId: searchCompaniesTest
-      summary: BizAPI Test company search
+      summary: BizAPI Test Company Search
       description: >-
         Test endpoint that returns fake data without consuming API credits.
         Accepts the same parameters as the live search endpoint.
       tags:
-        - Company Search
+      - Company Search
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CompanySearchRequest'
+            examples:
+              SearchCompaniesTestRequestExample:
+                summary: Default searchCompaniesTest request
+                x-microcks-default: true
+                value:
+                  company_name: Acme Corporation
+                  street: 123 Main Street
+                  city: San Francisco
+                  state: CA
+                  zip: '94105'
+                  country: US
+                  phone: +1-555-555-0100
+                  url: https://example.com
       responses:
         '200':
           description: Test search results with fake data
@@ -72,8 +135,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CompanySearchResponse'
+              examples:
+                SearchCompaniesTest200Example:
+                  summary: Default searchCompaniesTest 200 response
+                  x-microcks-default: true
+                  value:
+                    duns_number: '123456789'
+                    company_name: Acme Corporation
+                    dba: example-value
+                    sic_code_4: '7372'
+                    sic_code_8: '7372'
+                    naics_code_6: '511210'
+                    street: 123 Main Street
+                    city: San Francisco
+                    state: CA
+                    zip: '94105'
+                    country: US
+                    phone: +1-555-555-0100
+                    url: https://example.com
+                    top_contact_name: Acme Corporation
+                    top_contact_title: Chief Executive Officer
+                    sales_volume: '5000000'
+                    total_employees: '250'
+                    employees_on_site: '250'
+                    year_started: '2005'
+                    location_type: HQ
+                    subsidiary_indicator: N
+                    parent_duns: '123456789'
+                    parent_name: Acme Corporation
+                    domestic_ultimate_duns: '123456789'
+                    domestic_ultimate_name: Acme Corporation
+                    global_ultimate_duns: '123456789'
+                    global_ultimate_name: Acme Corporation
+                    hierarchy_code: HQ
+                    family_member_count: '3'
         '401':
           description: Unauthorized - invalid credentials
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     basicAuth:
@@ -89,114 +189,151 @@ components:
         company_name:
           type: string
           description: Name of the company to search for
+          example: Acme Corporation
         street:
           type: string
           description: Street address
+          example: 123 Main Street
         city:
           type: string
           description: City name
+          example: San Francisco
         state:
           type: string
           description: State or province
+          example: CA
         zip:
           type: string
           description: ZIP or postal code
+          example: '94105'
         country:
           type: string
           description: Country name or code
+          example: US
         phone:
           type: string
           description: Phone number
+          example: +1-555-555-0100
         url:
           type: string
           description: Company website URL
+          example: https://example.com
     CompanySearchResponse:
       type: object
       properties:
         duns_number:
           type: string
           description: DUNS number
+          example: '123456789'
         company_name:
           type: string
           description: Company name
+          example: Acme Corporation
         dba:
           type: string
           description: Doing business as name
+          example: example-value
         sic_code_4:
           type: string
           description: 4-digit SIC code
+          example: '7372'
         sic_code_8:
           type: string
           description: 8-digit SIC code
+          example: '7372'
         naics_code_6:
           type: string
           description: 6-digit NAICS code
+          example: '511210'
         street:
           type: string
           description: Street address
+          example: 123 Main Street
         city:
           type: string
           description: City
+          example: San Francisco
         state:
           type: string
           description: State or province
+          example: CA
         zip:
           type: string
           description: ZIP or postal code
+          example: '94105'
         country:
           type: string
           description: Country
+          example: US
         phone:
           type: string
           description: Phone number
+          example: +1-555-555-0100
         url:
           type: string
           description: Company website URL
+          example: https://example.com
         top_contact_name:
           type: string
           description: Name of top contact
+          example: Acme Corporation
         top_contact_title:
           type: string
           description: Title of top contact
+          example: Chief Executive Officer
         sales_volume:
           type: string
           description: Annual sales volume
+          example: '5000000'
         total_employees:
           type: string
           description: Total number of employees
+          example: '250'
         employees_on_site:
           type: string
           description: Number of employees at this location
+          example: '250'
         year_started:
           type: string
           description: Year the company was established
+          example: '2005'
         location_type:
           type: string
           description: Location type (HQ, Branch, or SL)
+          example: HQ
         subsidiary_indicator:
           type: string
           description: Subsidiary status indicator
+          example: N
         parent_duns:
           type: string
           description: Parent company DUNS number
+          example: '123456789'
         parent_name:
           type: string
           description: Parent company name
+          example: Acme Corporation
         domestic_ultimate_duns:
           type: string
           description: Domestic ultimate parent DUNS number
+          example: '123456789'
         domestic_ultimate_name:
           type: string
           description: Domestic ultimate parent name
+          example: Acme Corporation
         global_ultimate_duns:
           type: string
           description: Global ultimate parent DUNS number
+          example: '123456789'
         global_ultimate_name:
           type: string
           description: Global ultimate parent name
+          example: Acme Corporation
         hierarchy_code:
           type: string
           description: Corporate hierarchy code
+          example: HQ
         family_member_count:
           type: string
           description: Number of family members in corporate hierarchy
+          example: '3'
