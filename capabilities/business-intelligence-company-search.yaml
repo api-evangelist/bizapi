@@ -1,0 +1,123 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: BizAPI Business Intelligence API — Company Search
+  description: 'BizAPI Business Intelligence API — Company Search. 2 operations. Lead operation: BizAPI Live Company Search.
+    Self-contained Naftiko capability covering one Bizapi business surface.'
+  tags:
+  - Bizapi
+  - Company Search
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    BIZAPI_API_KEY: BIZAPI_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: business-intelligence-company-search
+    baseUri: https://www.naics.com/wp-json/naicsapi/v1
+    description: BizAPI Business Intelligence API — Company Search business capability. Self-contained, no shared references.
+    resources:
+    - name: cosearch
+      path: /cosearch
+      operations:
+      - name: searchcompanies
+        method: POST
+        description: BizAPI Live Company Search
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: cosearchtest
+      path: /cosearchtest
+      operations:
+      - name: searchcompaniestest
+        method: POST
+        description: BizAPI Test Company Search
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: basic
+      username: '{{env.BIZAPI_USER}}'
+      password: '{{env.BIZAPI_PASS}}'
+  exposes:
+  - type: rest
+    namespace: business-intelligence-company-search-rest
+    port: 8080
+    description: REST adapter for BizAPI Business Intelligence API — Company Search. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/cosearch
+      name: cosearch
+      description: REST surface for cosearch.
+      operations:
+      - method: POST
+        name: searchcompanies
+        description: BizAPI Live Company Search
+        call: business-intelligence-company-search.searchcompanies
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/cosearchtest
+      name: cosearchtest
+      description: REST surface for cosearchtest.
+      operations:
+      - method: POST
+        name: searchcompaniestest
+        description: BizAPI Test Company Search
+        call: business-intelligence-company-search.searchcompaniestest
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: business-intelligence-company-search-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for BizAPI Business Intelligence API — Company Search. One tool per consumed operation, routed
+      inline through this capability's consumes block.
+    tools:
+    - name: bizapi-live-company-search
+      description: BizAPI Live Company Search
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: business-intelligence-company-search.searchcompanies
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: bizapi-test-company-search
+      description: BizAPI Test Company Search
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: business-intelligence-company-search.searchcompaniestest
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
