@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "BizAPI Business Intelligence API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Company Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "BizAPI Live Company Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://www.naics.com/wp-json/naicsapi/v1/cosearch",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search for business entities and retrieve firmographic data including DUNS numbers, SIC codes, NAICS codes, company details, sales volume, employee counts, and corporate hierarchy information. Rate limited to 3 requests per rolling second."
+        },
+        {
+          "info": {
+            "name": "BizAPI Test Company Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://www.naics.com/wp-json/naicsapi/v1/cosearchtest",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Test endpoint that returns fake data without consuming API credits. Accepts the same parameters as the live search endpoint."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

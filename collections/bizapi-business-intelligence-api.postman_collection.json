@@ -1,0 +1,384 @@
+{
+  "item": [
+    {
+      "id": "3e521c1b-2b71-4105-bb83-4b39974f1c40",
+      "name": "Company Search",
+      "description": {
+        "content": "Search for business entity firmographic data",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "026fec5f-0b70-4555-88d9-3c0e11941b8f",
+          "name": "BizAPI Live Company Search",
+          "request": {
+            "name": "BizAPI Live Company Search",
+            "description": {
+              "content": "Search for business entities and retrieve firmographic data including DUNS numbers, SIC codes, NAICS codes, company details, sales volume, employee counts, and corporate hierarchy information. Rate limited to 3 requests per rolling second.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cosearch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_name\": \"<string>\",\n  \"street\": \"<string>\",\n  \"city\": \"<string>\",\n  \"state\": \"<string>\",\n  \"zip\": \"<string>\",\n  \"country\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"url\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "37d42dfd-6d19-41fc-bbc5-61efd80b1614",
+              "name": "Successful search results",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cosearch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corporation\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"duns_number\": \"123456789\",\n  \"company_name\": \"Acme Corporation\",\n  \"dba\": \"example-value\",\n  \"sic_code_4\": \"7372\",\n  \"sic_code_8\": \"7372\",\n  \"naics_code_6\": \"511210\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\",\n  \"top_contact_name\": \"Acme Corporation\",\n  \"top_contact_title\": \"Chief Executive Officer\",\n  \"sales_volume\": \"5000000\",\n  \"total_employees\": \"250\",\n  \"employees_on_site\": \"250\",\n  \"year_started\": \"2005\",\n  \"location_type\": \"HQ\",\n  \"subsidiary_indicator\": \"N\",\n  \"parent_duns\": \"123456789\",\n  \"parent_name\": \"Acme Corporation\",\n  \"domestic_ultimate_duns\": \"123456789\",\n  \"domestic_ultimate_name\": \"Acme Corporation\",\n  \"global_ultimate_duns\": \"123456789\",\n  \"global_ultimate_name\": \"Acme Corporation\",\n  \"hierarchy_code\": \"HQ\",\n  \"family_member_count\": \"3\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f8d43d78-a4a9-4aba-9531-8c4e2c610b65",
+              "name": "Unauthorized - invalid credentials",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cosearch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corporation\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "68adf45b-4eff-4ecb-8274-da67defe1fa7",
+              "name": "Rate limit exceeded - maximum 3 requests per rolling second",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cosearch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corporation\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "07454976-54b6-4f0b-9468-c4a97474d61f",
+          "name": "BizAPI Test Company Search",
+          "request": {
+            "name": "BizAPI Test Company Search",
+            "description": {
+              "content": "Test endpoint that returns fake data without consuming API credits. Accepts the same parameters as the live search endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cosearchtest"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_name\": \"<string>\",\n  \"street\": \"<string>\",\n  \"city\": \"<string>\",\n  \"state\": \"<string>\",\n  \"zip\": \"<string>\",\n  \"country\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"url\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d5c101e7-8830-4c69-8d3b-2e034aac6586",
+              "name": "Test search results with fake data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cosearchtest"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corporation\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"duns_number\": \"123456789\",\n  \"company_name\": \"Acme Corporation\",\n  \"dba\": \"example-value\",\n  \"sic_code_4\": \"7372\",\n  \"sic_code_8\": \"7372\",\n  \"naics_code_6\": \"511210\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\",\n  \"top_contact_name\": \"Acme Corporation\",\n  \"top_contact_title\": \"Chief Executive Officer\",\n  \"sales_volume\": \"5000000\",\n  \"total_employees\": \"250\",\n  \"employees_on_site\": \"250\",\n  \"year_started\": \"2005\",\n  \"location_type\": \"HQ\",\n  \"subsidiary_indicator\": \"N\",\n  \"parent_duns\": \"123456789\",\n  \"parent_name\": \"Acme Corporation\",\n  \"domestic_ultimate_duns\": \"123456789\",\n  \"domestic_ultimate_name\": \"Acme Corporation\",\n  \"global_ultimate_duns\": \"123456789\",\n  \"global_ultimate_name\": \"Acme Corporation\",\n  \"hierarchy_code\": \"HQ\",\n  \"family_member_count\": \"3\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7ff09369-33b7-4122-9b84-d678eae9db75",
+              "name": "Unauthorized - invalid credentials",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cosearchtest"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corporation\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zip\": \"94105\",\n  \"country\": \"US\",\n  \"phone\": \"+1-555-555-0100\",\n  \"url\": \"https://example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://www.naics.com/wp-json/naicsapi/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "050c593b-2666-4cb9-8131-f0f849f22c92",
+    "name": "BizAPI Business Intelligence API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time REST API from the NAICS Association that returns firmographic data on over 220 million US and international business entities including DUNS numbers, SIC codes, NAICS codes, company details, and corporate hierarchy information.\n\nContact Support:\n Name: NAICS Association",
+      "type": "text/plain"
+    }
+  }
+}
