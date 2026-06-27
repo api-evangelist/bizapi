@@ -47,14 +47,14 @@ apis:
         url: json-structure/bizapi-company-structure.json
       - type: JSONLD
         url: json-ld/bizapi-context.jsonld
-      - type: Example
+      - type: Examples
         url: examples/bizapi-company-example.json
 common:
   - type: Website
     url: https://www.naics.com/
   - type: Documentation
     url: https://www.naics.com/business-intelligence-api/
-  - type: SignUp
+  - type: Signup
     url: https://www.naics.com/bizapi-details/
   - type: Authentication
     url: https://www.naics.com/business-intelligence-api/
