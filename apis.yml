@@ -50,6 +50,10 @@ apis:
       - type: Examples
         url: examples/bizapi-company-example.json
 common:
+  - type: DomainSecurity
+    url: security/bizapi-domain-security.yml
+  - type: Authentication
+    url: authentication/bizapi-authentication.yml
   - type: Website
     url: https://www.naics.com/
   - type: Documentation
@@ -62,6 +66,8 @@ common:
     url: rules/bizapi-spectral-rules.yml
   - type: Vocabulary
     url: vocabulary/bizapi-vocabulary.yaml
+  - url: https://www.naics.com/feed/
+    type: Blog
   - type: Features
     data:
       - name: Real-Time Firmographic Data
