@@ -50,6 +50,8 @@ apis:
       - type: Examples
         url: examples/bizapi-company-example.json
 common:
+  - type: AgenticAccess
+    url: agentic-access/bizapi-agentic-access.yml
   - type: DomainSecurity
     url: security/bizapi-domain-security.yml
   - type: Authentication
