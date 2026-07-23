@@ -1,36 +1,25 @@
 openapi: 3.1.0
 info:
-  title: BizAPI Business Intelligence API
-  description: >-
-    Real-time REST API from the NAICS Association that returns firmographic
-    data on over 220 million US and international business entities including
-    DUNS numbers, SIC codes, NAICS codes, company details, and corporate
-    hierarchy information.
+  title: BizAPI Business Intelligence Company Search API
+  description: Real-time REST API from the NAICS Association that returns firmographic data on over 220 million US and international business entities including DUNS numbers, SIC codes, NAICS codes, company details, and corporate hierarchy information.
   version: '1.0'
   contact:
     name: NAICS Association
     url: https://www.naics.com
-externalDocs:
-  description: BizAPI Documentation
-  url: https://www.naics.com/business-intelligence-api/
 servers:
 - url: https://www.naics.com/wp-json/naicsapi/v1
   description: Production Server
+security:
+- basicAuth: []
 tags:
 - name: Company Search
   description: Search for business entity firmographic data
-security:
-- basicAuth: []
 paths:
   /cosearch:
     post:
       operationId: searchCompanies
       summary: BizAPI Live Company Search
-      description: >-
-        Search for business entities and retrieve firmographic data including
-        DUNS numbers, SIC codes, NAICS codes, company details, sales volume,
-        employee counts, and corporate hierarchy information. Rate limited to
-        3 requests per rolling second.
+      description: Search for business entities and retrieve firmographic data including DUNS numbers, SIC codes, NAICS codes, company details, sales volume, employee counts, and corporate hierarchy information. Rate limited to 3 requests per rolling second.
       tags:
       - Company Search
       requestBody:
@@ -104,9 +93,7 @@ paths:
     post:
       operationId: searchCompaniesTest
       summary: BizAPI Test Company Search
-      description: >-
-        Test endpoint that returns fake data without consuming API credits.
-        Accepts the same parameters as the live search endpoint.
+      description: Test endpoint that returns fake data without consuming API credits. Accepts the same parameters as the live search endpoint.
       tags:
       - Company Search
       requestBody:
@@ -175,13 +162,6 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
-      description: >-
-        HTTP Basic Authentication using credentials provided during account
-        activation.
   schemas:
     CompanySearchRequest:
       type: object
@@ -337,3 +317,11 @@ components:
           type: string
           description: Number of family members in corporate hierarchy
           example: '3'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic Authentication using credentials provided during account activation.
+externalDocs:
+  description: BizAPI Documentation
+  url: https://www.naics.com/business-intelligence-api/
