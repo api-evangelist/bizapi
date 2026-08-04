@@ -1,0 +1,14 @@
+{
+  "provider": "bizapi",
+  "sources": [
+    "bizapi-company-search-api-openapi.yml"
+  ],
+  "outputs": [
+    "bizapi-company-search-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
