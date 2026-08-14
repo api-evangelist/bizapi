@@ -30,14 +30,20 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/bizapi.png
 access: 3rd-Party
 created: '2025-02-24'
-modified: '2026-05-19'
+modified: '2026-08-14'
 position: Consuming
 specificationVersion: '0.19'
 apis:
 - aid: bizapi:bizapi-company-search-api
   name: BizAPI Company Search API
-  description: Search for business entity firmographic data
+  description: >-
+    Real-time business data append API. Submit a partial business record — company name and
+    address, phone, website or DUNS number — and BizAPI matches it against the Dun & Bradstreet
+    business database, returning NAICS and SIC classification codes, address and contact data,
+    employee and sales figures, and the corporate family tree. One POST operation plus a
+    credit-free sandbox twin, HTTP Basic auth, billed per successful match.
   humanURL: https://www.naics.com/business-intelligence-api/
+  baseURL: https://www.naics.com/wp-json/naicsapi/v1
   tags:
   - Company Search
   properties:
@@ -53,6 +59,10 @@ apis:
     url: json-ld/bizapi-context.jsonld
   - type: Examples
     url: examples/bizapi-company-example.json
+  - type: Overlay
+    url: overlays/bizapi-company-search-api-overlay.yaml
+  - type: DataModel
+    url: data-model/bizapi-data-model.yml
 common:
   - type: AgenticAccess
     url: agentic-access/bizapi-agentic-access.yml
@@ -64,7 +74,7 @@ common:
     url: https://www.naics.com/
   - type: Documentation
     url: https://www.naics.com/business-intelligence-api/
-  - type: Signup
+  - type: SignUp
     url: https://www.naics.com/bizapi-details/
   - type: Authentication
     url: https://www.naics.com/business-intelligence-api/
@@ -74,6 +84,40 @@ common:
     url: vocabulary/bizapi-vocabulary.yaml
   - url: https://www.naics.com/feed/
     type: Blog
+  - type: DeveloperPortal
+    url: https://www.naics.com/business-intelligence-api/
+  - type: APIReference
+    url: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+  - type: GettingStarted
+    url: https://www.naics.com/business-intelligence-api/bizapi-documents/
+  - type: Postman
+    url: https://www.naics.com/wp-content/uploads/2021/09/NAICS-BizAPI-V2-Examples.postman_collection.json_.zip
+  - type: Support
+    url: https://www.naics.com/contact-us/
+  - type: Pricing
+    url: https://www.naics.com/data-layouts-pricing/
+  - type: PrivacyPolicy
+    url: https://www.naics.com/privacypolicy/
+  - type: StatusPage
+    url: https://status.naics.com/
+  - type: Conventions
+    url: conventions/bizapi-conventions.yml
+  - type: ErrorCatalog
+    url: errors/bizapi-problem-types.yml
+  - type: Sandbox
+    url: sandbox/bizapi-sandbox.yml
+  - type: Lifecycle
+    url: lifecycle/bizapi-lifecycle.yml
+  - type: Conformance
+    url: conformance/bizapi-conformance.yml
+  - type: Plans
+    url: plans/bizapi-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/bizapi-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/bizapi-llms.txt
+  - type: AgentSkill
+    url: skills/_index.yml
   - type: Features
     data:
       - name: Real-Time Firmographic Data
@@ -119,3 +163,8 @@ common:
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-14'
+  status: enriched
+  artifacts_added: 16
+  pass: local-v1
