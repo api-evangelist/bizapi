@@ -4,7 +4,19 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: BizAPI
 providerId: bizapi
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-08-14'
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/data-layouts-pricing/
+additional_sources:
+  - https://www.naics.com/bizapi-details/
+  - https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+# 2026-08-14: replaced the 2026-05-04 bulk-sweep scaffold (roadmap#35), which invented
+# Free / Professional / Enterprise tiers with a 1,000-request free quota, 100,000-request
+# paid quota and "Webhook Subscriptions". BizAPI publishes none of that: there is no free
+# tier, no self-serve plan, no monthly request quota and no webhook surface. What the
+# provider does publish is a set of named record layouts that each carry an unpublished price
+# tier, and two worked pricing examples on the data-append pricing page.
 tags:
   - Business Intelligence
   - Company Data
@@ -12,131 +24,136 @@ tags:
   - Firmographic Data
   - NAICS
   - SIC
-description: Machine-readable plans and pricing scaffold for this API provider. Conforms to the API Commons
-  Plans schema. Tier limits and prices are scaffold defaults; replace with provider-published values.
-plans:
-  - id: bizapi-free
-    name: Free
-    type: freemium
-    description: Free entry tier for the BizAPI API surface. Intended for evaluation, prototyping, and
-      low-volume integrations. Real limits and pricing must be reconciled with the provider's published
-      plan documentation.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota across all included endpoints
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 1000
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the free tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 10
-        timeFrame: minute
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-    elements:
-      - name: Public Documentation
-      - name: Community Support
-      - name: Sandbox Access
-      - name: BizAPI Business Intelligence API
-  - id: bizapi-pro
-    name: Professional
-    type: paid
-    description: Production tier for BizAPI. Provides higher quotas, priority support, and access to the
-      broader API portfolio. Pricing placeholder; align with the provider's pricing page.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 100000
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1
-        price: TBD
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the professional tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 100
-        timeFrame: minute
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Overage
-        description: Per-request price after monthly quota is exceeded
-        name: overage
-        type: metered
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1000
-        price: TBD
-        userMultiplied: false
-    elements:
-      - name: All Production Endpoints
-      - name: Email Support
-      - name: SLA Targets
-      - name: Webhook Subscriptions
-      - name: BizAPI Business Intelligence API
-  - id: bizapi-enterprise
-    name: Enterprise
-    type: enterprise
-    description: Custom-negotiated tier for BizAPI. Includes dedicated capacity, contractual SLAs, security
-      review, data residency options, and named technical account management.
-    entries:
-      - label: API Requests
-        description: Negotiated request volume; -1 indicates uncapped subject to fair use
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: configurable
-        domains: []
-        unit: 1
-        price: custom
-        userMultiplied: false
-      - label: Rate Limit
-        description: Negotiated burst and steady-state rate
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 1000
-        timeFrame: minute
-        geo: configurable
-        domains: []
-        unit: 1
-        price: custom
-        userMultiplied: false
-    elements:
-      - name: Unlimited / Negotiated Volume
-      - name: 24/7 Dedicated Support
-      - name: Contractual SLA
-      - name: Security & Compliance Review
-      - name: Dedicated Account Manager
-      - name: Custom Data Residency
-      - name: BizAPI Business Intelligence API
+description: >-
+  BizAPI publishes no self-serve pricing plans. Access is quote-based: a prospect requests
+  trial access, NAICS Association activates credentials against one chosen Record Layout, and
+  the account is charged per successfully matched listing out of a prepaid credit balance.
+  Each Record Layout is its own price tier but no per-layout price is published.
+plan_count: 0
+pricing_model: quote-based-per-match
+published_pricing: partial
+billing_unit: successfully matched listing
+billing_quote: >-
+  "You are only charged for Successfully Matched Listings." (https://www.naics.com/bizapi-details/)
+pricing_note: >-
+  "Each Record Layout utilizes a unique price tier. Contact APICloudSolutions@NAICS.com or your
+  NAICS API Account Contact to acquire Pricing." (BizAPI V2 Documentation, section 1.4)
+  The public pricing page states "BUY MORE, SAVE MORE. Our Pricing is Always Competitive and
+  Catered to Each Client's Data Needs. Contact Our Data Experts for a Quick & Easy Quote!"
+plans: []
+price_tiers:
+  note: >-
+    These are the Record Layouts the provider names as its price tiers. The layout is fixed on
+    the account at credential activation and echoed back on every response as
+    Matching Data.Layout. No price is published for any of them.
+  tiers:
+    - code: NA
+      name: NAICS & SIC
+      price: null
+      currency: USD
+      includes:
+        - 4 Digit SIC 1 + description
+        - 4 Digit SIC 2 + description
+        - 8 Digit SIC 1 + description
+        - 8 Digit SIC 2 + description
+        - NAICS 1 Code + description
+        - NAICS 2 Code + description
+    - code: TA
+      name: Telemarketing
+      price: null
+      currency: USD
+      includes:
+        - NAICS & SIC content
+        - Company Name, Secondary Business Name
+        - Street Address, City, State/Province, ZIP Code, Country, Phone
+        - CEO Title, CEO First Name, CEO Last Name, CEO Name (full)
+        - Line of Business, Location Type, Year Started
+    - code: EA
+      name: Enhanced Telemarketing with Employee Figures
+      price: null
+      currency: USD
+      includes:
+        - NAICS & SIC + Telemarketing content
+        - Employees on Site
+        - Employees Total
+    - code: SA
+      name: Enhanced Telemarketing with Sales Figures
+      price: null
+      currency: USD
+      includes:
+        - NAICS & SIC + Telemarketing content
+        - Sales Volume in US$
+    - code: PA
+      name: Prospecting
+      price: null
+      currency: USD
+      includes:
+        - NAICS & SIC + Telemarketing content
+        - Employees on Site, Employees Total
+        - Sales Volume in US$
+        - URL (when available)
+    - code: PL
+      name: Prospecting with Linkage
+      price: null
+      currency: USD
+      includes:
+        - NAICS & SIC + Telemarketing + Prospecting content
+        - Subsidiary Indicator, Global Ult Indicator
+        - 'Global Ult DUNS #, Name, State/Province, Country'
+        - 'Domestic Ult DUNS #, Name, State/Province, Country'
+        - 'HQ Ult DUNS # / Parent Ult DUNS #, HQ/Parent Ult Bus. Name, State/Province, Country'
+        - Hierarchy Code
+        - '# Of Family Members'
+    - code: custom
+      name: Custom layout
+      price: null
+      currency: USD
+      note: Custom layouts available on request (https://www.naics.com/bizapi-details/).
+published_examples:
+  note: >-
+    The only concrete numbers the provider publishes are two worked examples on the data-append
+    pricing page. They are stated for batch data-append projects and assume an 85% match rate;
+    they are not a published API rate card, but they are the provider's own numbers and are the
+    best available indication of the per-match price band.
+  source: https://www.naics.com/data-layouts-pricing/
+  examples:
+    - label: 'Example #1'
+      records: 5000
+      setup_fee: 500
+      append_cost: 850
+      rate_per_thousand: 200
+      total: 1350
+      currency: USD
+      assumption: 85% match rate
+    - label: 'Example #2'
+      records: 25000
+      setup_fee: 1000
+      append_cost: 3400
+      rate_per_thousand: 160
+      total: 4400
+      currency: USD
+      assumption: 85% match rate
+  volume_discount: true
+onboarding:
+  self_serve: false
+  free_tier: false
+  trial: true
+  trial_note: >-
+    "Fill Out the Form For Immediate Trial Access to the BizAPI!" — a contact form on
+    https://www.naics.com/bizapi-details/ requesting contact name, email, company name, phone,
+    data of interest and objectives. No instant credential issuance.
+  signup_url: https://www.naics.com/bizapi-details/
+  account_url: https://www.naics.com/my-account/
+  activation: >-
+    Credentials and the Record Layout are issued by NAICS Association at account activation.
+sales_contact:
+  email: APICloudSolutions@NAICS.com
+  phone: 973-625-5626
+  page: https://www.naics.com/contact-us/
+gaps:
+  - No published per-record or per-credit API price.
+  - No self-serve signup or checkout for API access.
+  - No free tier and no public quota; every account is negotiated.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

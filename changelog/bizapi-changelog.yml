@@ -1,0 +1,60 @@
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/business-intelligence-api/bizapi-documents/
+summary: >-
+  BizAPI publishes no dated changelog, release-notes page or RSS feed for the API. The only
+  version history the provider makes public is the cover page of each downloadable manual and
+  the two independently monitored services on the status page. The entries below are the
+  dated provider artifacts that were actually fetched; they are release markers, not a
+  provider-maintained changelog.
+scheme: uri-path namespace (v1, v2)
+current_version: v2
+current_document_version: 2.0.0.1
+changelog_url: null
+feed_url: null
+has_dated_changelog: false
+entries:
+  - version: v2
+    document_version: 2.0.0.1
+    date: '2021-09-01'
+    source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+    breaking: true
+    highlights:
+      - New /wp-json/naicsapi/v2 namespace alongside the still-live v1 namespace.
+      - >-
+        Six explicit match methods documented and ranked (DUNS, Standard, Loose, URL, Name,
+        Phone), with exclusivity rules for DUNS/URL/Phone.
+      - >-
+        Expanded HTTP status table adds a second 400 ("Missing field: layout") and 429
+        ("Too many requests. Please limit your requests to 3 per second"), neither of which
+        appears in the v1 manual.
+      - Sandbox documented as a first-class section with published success fixtures and the "bad" failure trigger.
+      - Postman collection published (NAICS BizAPI V2 Client Examples, 18 requests).
+      - Match Grade expanded to a documented 7-letter positional string with A/B/F/Z semantics.
+    additions:
+      - Prospecting with Linkage layout detail table (corporate hierarchy fields).
+      - Section 1.5 "Improving Input Data Quality" with field-level matching guidance.
+    notes: >-
+      Marked breaking because v2 is a new base path; the provider ships no migration guide and
+      no field-level diff.
+  - version: v1
+    document_version: 3.0.1.1
+    date: '2020-08-12'
+    source: https://www.naics.com/wp-content/uploads/2018/05/BizAPI-Documentation.pdf
+    breaking: false
+    highlights:
+      - Marked *New* in the table of contents; Prospecting with Linkage record type.
+      - Marked *New* in the table of contents; Test Endpoint for the BizAPI Service.
+    notes: >-
+      Copyright line reads 2017-2020. The file path dates to 2018/05 but the document itself
+      was updated 2020-08-12.
+observed:
+  - date: '2026-08-14'
+    note: >-
+      Probed live. https://www.naics.com/wp-json/naicsapi/v1 and .../v2 both return HTTP 200
+      route indexes; /v3 returns 404. status.naics.com lists BizAPI V1 and BizAPI V2 as
+      separately monitored, both Operational.
+gaps:
+  - No dated changelog page, no release notes, no RSS/Atom feed for API changes.
+  - No migration guide from v1 to v2 despite the provider recommending the upgrade.
+  - No announcement channel; the status page carries incidents only, not API changes.

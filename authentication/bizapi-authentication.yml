@@ -1,13 +1,79 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/bizapi-business-intelligence-api-openapi.yml
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+docs: https://www.naics.com/business-intelligence-api/bizapi-documents/
+derived_from: openapi/bizapi-company-search-api-openapi.yml
 summary:
   types:
   - http
+  http_schemes:
+  - basic
+  api_key_in: []
+  oauth2_flows: []
+  scopes: false
+  mtls: false
 schemes:
 - name: basicAuth
   type: http
   scheme: basic
-  description: HTTP Basic Authentication using credentials provided during account activation.
+  header: Authorization
+  format: 'Basic base64(username:password)'
+  description: >-
+    HTTP Basic Authentication. "The BizAPI Utilizes Basic Authentication. Credentials are given
+    to you during your Account Activation." The username is an account identifier (the manual's
+    worked example is JohnDoeInc) and the password is a provider-issued secret.
   sources:
-  - openapi/bizapi-business-intelligence-api-openapi.yml
+  - openapi/bizapi-company-search-api-openapi.yml
+  - https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+  applies_to:
+  - https://www.naics.com/wp-json/naicsapi/v1/cosearch
+  - https://www.naics.com/wp-json/naicsapi/v1/cosearchtest
+  - https://www.naics.com/wp-json/naicsapi/v2/cosearch
+  - https://www.naics.com/wp-json/naicsapi/v2/cosearchtest
+  gotcha: >-
+    "Spaces in Password MUST be kept." The issued password contains significant whitespace,
+    published in the manual as six space-separated groups. Trimming or collapsing it — which
+    many config loaders and secret managers do by default — produces a 401.
+issuance:
+  self_serve: false
+  process: >-
+    Credentials are issued by NAICS Association at account activation, after a trial request is
+    submitted through the form at https://www.naics.com/bizapi-details/. There is no developer
+    console that mints keys.
+  request_url: https://www.naics.com/bizapi-details/
+  account_url: https://www.naics.com/my-account/
+  contact: APICloudSolutions@NAICS.com
+  bound_to_layout: >-
+    The Record Layout that shapes every response is fixed to the credential at activation, not
+    chosen per request. Changing layout means changing account configuration.
+sandbox:
+  separate_credentials: false
+  note: >-
+    "The Sandbox requires basic authentication just like the live endpoint." The same secret
+    authenticates /cosearch and /cosearchtest — the path selects test mode, not the credential.
+    There is no test-mode key prefix, so a leaked credential is a production credential and
+    static analysis cannot distinguish a test key from a live one.
+  artifact: sandbox/bizapi-sandbox.yml
+failure_modes:
+  - status: 401
+    message: Credentials are Missing or Invalid.
+  - status: 403
+    message: >-
+      Request not submitted due to lack of searches. Contact apicloudsolutions@naics.com or
+      call 973-625-5626 to purchase more searches.
+    note: >-
+      Authentication succeeded; authorization failed on the prepaid credit balance rather than
+      on scope or role.
+transport:
+  tls_required: true
+  quote: All requests should be made over SSL.
+  observed: TLSv1.3, HSTS max-age 31536000 (security/bizapi-domain-security.yml)
+  warning: >-
+    HTTP Basic sends a reusable long-lived secret on every request. There is no token exchange,
+    no expiry, no rotation endpoint and no revocation API documented.
+gaps:
+  - No OAuth 2.0, no OpenID Connect, no scopes — authorization is all-or-nothing per credential.
+  - No API key rotation, expiry or revocation mechanism documented.
+  - No least-privilege model; one credential grants the account's full layout and full credit balance.
+  - No separate sandbox credential.
+  - No MFA or IP allowlisting documented for API credentials.

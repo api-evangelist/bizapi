@@ -1,0 +1,110 @@
+generated: '2026-08-14'
+method: derived
+source: openapi/bizapi-company-search-api-openapi.yml
+searched:
+  note: >-
+    The provider publishes no compliance program, certification list, trust center or standards
+    conformance claim. https://www.naics.com/security/ and /responsible-disclosure/ return 404;
+    probe-security-programs.py found no vulnerability-disclosure policy and no trust center.
+    The only third-party assurance mark found anywhere on the site is an Authorize.Net Verified
+    Merchant badge on the BizAPI details page, which speaks to payment processing on the web
+    store, not to the API. No Compliance pointer is emitted in apis.yml.
+  date: '2026-08-14'
+standards:
+  - id: rest
+    conforms: true
+    evidence: >-
+      Provider states "The API is organized around REST" (BizAPI V2 Documentation, section 1.0).
+      Partial in practice — reads are modelled as POST and there is no resource addressing.
+  - id: http-basic-auth
+    conforms: true
+    evidence: >-
+      RFC 7617. OpenAPI securityScheme type http / scheme basic; provider documents
+      "Authorization: Basic " with base64-encoded credentials.
+  - id: tls-required
+    conforms: true
+    evidence: >-
+      "All requests should be made over SSL." Probed TLSv1.3 with HSTS max-age 31536000 on
+      www.naics.com (security/bizapi-domain-security.yml).
+  - id: oauth2
+    conforms: false
+    evidence: No oauth2 securityScheme in any spec and no OAuth documentation.
+  - id: oidc
+    conforms: false
+    evidence: /.well-known/openid-configuration returns 404.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      Errors are bespoke JSON with literal message strings; no application/problem+json media
+      type appears in the spec or the docs. See errors/bizapi-problem-types.yml.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: >-
+      No Sunset or Deprecation header support documented, and no deprecation policy, despite
+      the provider recommending migration off V1.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 (well-known/bizapi-well-known.yml).
+  - id: rfc8615-well-known
+    conforms: false
+    evidence: Every probed /.well-known/ path returns 404.
+  - id: idempotency-key
+    conforms: false
+    evidence: >-
+      No idempotency header or dedupe window documented, on an API where every successful call
+      is billable. See conventions/bizapi-conventions.yml#idempotency.
+  - id: pagination
+    conforms: not-applicable
+    evidence: Single-record append API; no collection endpoints exist to page.
+  - id: rate-limit-headers
+    conforms: false
+    evidence: >-
+      429 is returned with a message but no RateLimit-*, X-RateLimit-* or Retry-After header is
+      documented or observed.
+  - id: openapi
+    conforms: partial
+    evidence: >-
+      No OpenAPI is published by the provider. The spec in this repo was authored by API
+      Evangelist and, as of 2026-08-14, does not match the provider's published field names —
+      see lifecycle/bizapi-lifecycle.yml#notes.
+  - id: asyncapi
+    conforms: not-applicable
+    evidence: No event, streaming or webhook surface exists. Not penalized.
+  - id: json-api
+    conforms: false
+    evidence: Bespoke three-block response envelope, not JSON:API media type or structure.
+  - id: naics-2022
+    conforms: true
+    evidence: >-
+      Domain standard. Returns 6-digit NAICS codes with descriptions; NAICS Association is the
+      publisher of the NAICS classification reference itself.
+  - id: sic
+    conforms: true
+    evidence: Returns 4-digit and 8-digit SIC codes with descriptions.
+  - id: duns
+    conforms: true
+    evidence: >-
+      Returns D&B D-U-N-S nine-digit identifiers and the full corporate linkage tree (global
+      ultimate, domestic ultimate, parent/HQ, hierarchy code, family member count) sourced from
+      the D&B business database.
+data_provenance:
+  upstream: Dun & Bradstreet business database
+  quote: >-
+    "they are Matched against the D&B Business Database; the Largest and Best Quality Business
+    Database in the Market."
+  note: >-
+    BizAPI is a redistribution surface over D&B data. The BEMFAB field carries D&B suppression
+    semantics — a value of D means the record was de-listed at the customer's request and may
+    not be marketed to, only industry-coded. Downstream consumers inherit that restriction.
+privacy:
+  pii_posture: >-
+    The provider explicitly instructs callers to exclude Personally Identifiable Information
+    from the optional passthrough fields on the request. Firmographic responses do include
+    named CEO/top-contact fields on the Telemarketing and richer layouts.
+  privacy_policy: https://www.naics.com/privacypolicy/
+  cookie_policy: https://www.naics.com/cookie-policy/
+  terms_of_service: null
+  terms_note: >-
+    No terms of service, terms of use or API license agreement page was found. /terms/,
+    /terms-of-use/, /terms-and-conditions/ and /terms-conditions/ all return 404; /legal/ is a
+    marketing page for a Legal Status Append product, not a legal agreement.

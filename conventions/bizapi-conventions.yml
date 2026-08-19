@@ -1,0 +1,182 @@
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+docs: https://www.naics.com/business-intelligence-api/bizapi-documents/
+derived_from:
+  - openapi/bizapi-company-search-api-openapi.yml
+  - https://www.naics.com/wp-json/naicsapi/v1
+  - https://www.naics.com/wp-json/naicsapi/v2
+summary: >-
+  "The API is organized around REST. All requests should be made over SSL. All request and
+  response bodies, including errors, will be encoded in JSON. Requests are Authenticated via
+  Basic Authentication. A maximum of 3 Requests can be made per rolling second."
+  (BizAPI V2 Documentation, section 1.0 "Making a Request".) BizAPI is a single-resource
+  append API: one POST operation plus its sandbox twin. Several conventions that a
+  collection-oriented API would carry — pagination, sparse fieldsets, expansion, conditional
+  requests — do not exist here because there is no collection to page through.
+
+transport:
+  protocol: REST over HTTPS
+  tls_required: true
+  content_type: application/json
+  charset: 'application/json; charset=utf-8'
+  methods: [POST]
+  note: >-
+    Every documented BizAPI operation is a POST, including reads. The request body is the
+    search key; there are no query parameters or path parameters.
+
+authentication:
+  style: HTTP Basic
+  header: 'Authorization: Basic <base64(username:password)>'
+  issued: At API account activation by NAICS Association.
+  caveat: >-
+    "Spaces in Password MUST be kept" — the issued password contains significant whitespace
+    that must survive into the base64 encoding.
+  artifact: authentication/bizapi-authentication.yml
+
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No idempotency key, request-deduplication header or replay window is documented. The
+    provider publishes a "Request ID" but it is server-assigned per request and returned in
+    the response, so it cannot be used as a client-supplied idempotency key. Because every
+    successful match decrements the account's prepaid "Matches Remaining" credit balance, a
+    retried request is a billable duplicate — this is a real gap for agent and batch callers.
+  evidence: >-
+    BizAPI V2 Documentation sections 1.0-2.7 contain no idempotency, dedupe or retry-safety
+    guidance.
+
+pagination:
+  supported: false
+  note: >-
+    Not applicable. /cosearch resolves one input record to at most one best-matching business
+    record; it does not return a result set. Where several locations could match, the
+    provider states it prioritizes "the Largest Location (based on sales/employee figures)
+    that meet the input criteria provided" rather than returning a page of candidates.
+
+field_selection:
+  expansion: false
+  sparse_fields: false
+  note: >-
+    Response shape is fixed by the Record Layout established on the account at credential
+    activation, not chosen per request. "No layout needs to be specified when submitting a
+    request. Layout is established upon API Credential Activation." The six layouts are
+    NA (NAICS & SIC), TA (Telemarketing), EA (ETM w/Emp), SA (ETM w/Sales), PA (Prospect) and
+    PL (Prospect w/Linkage); each is a separate price tier. The active layout is echoed back
+    on every response as Matching Data.Layout.
+
+metadata:
+  passthrough: true
+  note: >-
+    "You may include additional fields (excluding Personally Identifiable information) not
+    represented above for your own reference. Inclusion of one of these additional fields will
+    not prevent DUNS, URL, or Phone match from occurring. For example: You could add
+    "Client#": "12345" to the request and have it returned so you can better identify to which
+    record to connect the result." Unrecognized request keys are echoed back in the
+    "Search Terms" block — this is the correlation mechanism for batch/CRM enrichment.
+  pii_restriction: >-
+    The provider explicitly excludes Personally Identifiable Information from passthrough
+    fields.
+
+tracing:
+  request_id_header: null
+  request_id_field: Matching Data."Request ID"
+  note: >-
+    "The Request ID is a Unique Number Sequence that is associated with each request you make.
+    Should requests need to be reviewed, the Request ID will help us compare our Tracking data
+    with yours. We encourage you to retain this information in your records." It is returned
+    in the response body, not in a response header, so it cannot be read from a failed or
+    non-200 response.
+
+response_envelope:
+  shape: three-block
+  blocks:
+    - name: Search Terms
+      description: Echo of the input the caller submitted, plus any passthrough fields.
+    - name: Matching Data
+      description: >-
+        Request ID, Layout, Matches Remaining, Match Method, Match Grade, Confidence Code,
+        BEMFAB, DUNS #. See errors/bizapi-problem-types.yml#diagnostic_fields.
+    - name: Appended Data
+      description: >-
+        The matched firmographic record, shaped by the account's Record Layout. On a miss this
+        block collapses to {"Message": "No match found"} and the HTTP status is still 200.
+  soft_failure_warning: >-
+    A no-match is HTTP 200 with a sentinel message, not a 404. Callers and agents MUST inspect
+    Appended Data.Message rather than relying on the status code.
+
+error_envelope:
+  format: bespoke-json
+  rfc9457: false
+  artifact: errors/bizapi-problem-types.yml
+  note: >-
+    Documented status codes with literal message strings; no application/problem+json, no
+    machine-readable error type or code field.
+
+matching_semantics:
+  note: >-
+    Which of the six match methods fires is determined by which fields are present, not by a
+    parameter. Ordered most to least precise.
+  methods:
+    - {rank: 1, method: DUNS Match, keys: [duns], exclusive: true, confidence: 10}
+    - {rank: 2, method: Standard Match, keys: [companyName, address, city, state, postalCode, country, phone], exclusive: false, confidence: '7+'}
+    - {rank: 3, method: Loose Match, keys: [companyName, state], exclusive: false, confidence: 8}
+    - {rank: 4, method: URL Match, keys: [url], exclusive: true, confidence: 10, scope: US records only}
+    - {rank: 5, method: Name Match, keys: [companyName, country], exclusive: false, confidence: 8}
+    - {rank: 6, method: Phone Match, keys: [phone], exclusive: true, confidence: 10}
+  exclusivity_rule: >-
+    "If any other fields are submitted with DUNS, URL, or Phone Match, then these match methods
+    will not trigger." The exclusive methods must be sent alone.
+  suppression_rule: >-
+    "Records with a Confidence Level of 6 or lower are not returned since these almost always
+    reflect bad results." Low-confidence matches are withheld rather than surfaced with a
+    warning.
+
+input_constraints:
+  - Each field can handle over 200 characters; 65 characters or less is generally better for matching.
+  - Special characters such as accented letters and the copyright symbol are not acknowledged and may be turned into a question mark.
+  - companyName should contain only ONE company name.
+  - address should contain only the street address OR a PO Box number.
+  - phone should be a string of numbers with no special characters and no extensions.
+  - A ZIP code without city/state is resolved against the primary postal city and state linked to that ZIP.
+  - Use standard postal abbreviations (Av, Ave, Aven, Avenu, Avenue, Avn, Avnue).
+
+versioning:
+  scheme: uri-path
+  current: v2
+  current_base: https://www.naics.com/wp-json/naicsapi/v2
+  previous: v1
+  previous_base: https://www.naics.com/wp-json/naicsapi/v1
+  doc_version: 2.0.0.1
+  doc_updated: '2021-09-01'
+  note: >-
+    Both namespaces are live and independently monitored on the provider status page. The
+    provider labels V1 "Legacy API Solution" and recommends upgrading to V2. Field names differ
+    between the two — see lifecycle/bizapi-lifecycle.yml.
+  artifact: lifecycle/bizapi-lifecycle.yml
+
+rate_limit_signaling:
+  limit: 3 requests per rolling second
+  status_on_exhaustion: 429
+  message: Too many requests. Please limit your requests to 3 per second
+  headers_documented: []
+  note: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After response header is documented. The only
+    runtime quota signal the API returns is the Matching Data."Matches Remaining" credit
+    counter in the body of a successful response.
+  artifact: rate-limits/bizapi-rate-limits.yml
+
+batch:
+  supported: false
+  note: >-
+    "We intend to offer Batch upload solutions via API down the road, however, we can assist
+    with any large projects that arise in the interim." Callers with large volumes are directed
+    to their NAICS representative or APICloudSolutions@naics.com.
+
+webhooks:
+  supported: false
+  note: >-
+    No customer-facing webhook or event subscription surface is documented. The
+    /naicsapi/v1/sharehookcallback* routes visible in the WordPress REST route index are
+    inbound callbacks for the provider's own site integrations, not a subscriber event API.

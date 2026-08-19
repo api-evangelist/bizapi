@@ -1,0 +1,67 @@
+generated: '2026-08-14'
+method: derived
+status: candidate
+source: openapi/bizapi-company-search-api-openapi.yml
+searched:
+  note: >-
+    Searched before deriving. No official hosted or local MCP server exists for BizAPI.
+    npm registry search for "naics" / "bizapi" returned only third-party NAICS code datasets
+    and two unrelated MCP servers (bidsparq-mcp-server, govtoolspro-mcp-server) that are not
+    published by NAICS Association. No GitHub organization exists for NAICS Association. The
+    provider docs, status page and pricing pages make no mention of MCP, agents or LLM access.
+  registries_checked: [npm, pypi, github]
+  date: '2026-08-14'
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  verified: derived
+  note: >-
+    mode is none because nobody ships an MCP server for BizAPI — neither the provider nor a
+    credible third party. The tools below are a DERIVED candidate mapped from real OpenAPI
+    operationIds so the surface is legible to an agent; they are not callable today. auth
+    records what a server would need (HTTP Basic credentials issued by NAICS Association at
+    account activation), not an observed challenge.
+server:
+  name: bizapi
+  transport: null
+  url: null
+tools:
+  - name: search_companies
+    description: >-
+      Match a business record against the D&B business database and return firmographic data —
+      NAICS and SIC codes, address, contact, size figures and corporate hierarchy. Consumes one
+      prepaid match credit on a successful match.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+    method: POST
+    path: /cosearch
+    consequence: billable
+    note: >-
+      Input is one of six mutually-shaped match keys — see
+      conventions/bizapi-conventions.yml#matching_semantics. An agent must send duns, url or
+      phone ALONE or those match methods will not trigger.
+  - name: search_companies_test
+    description: >-
+      Identical contract to search_companies against the sandbox endpoint. Returns fabricated
+      append data and consumes no credits. Include the string "bad" in any input field to force
+      a no-match response.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompaniesTest
+    method: POST
+    path: /cosearchtest
+    consequence: safe
+    note: The correct default for any agent exploring this API. See sandbox/bizapi-sandbox.yml.
+agent_notes:
+  - >-
+    A no-match is HTTP 200 with Appended Data.Message = "No match found". An agent that keys
+    off status codes will report a phantom success.
+  - >-
+    There is no idempotency key. Every retry of a successful match is separately billable
+    against the account's prepaid credit balance.
+  - >-
+    Throughput is capped at 3 requests per rolling second with no Retry-After header, so an
+    agent must pace itself blind.
+  - >-
+    The remaining credit balance is only readable from Matching Data."Matches Remaining" on a
+    200 response; there is no quota endpoint.

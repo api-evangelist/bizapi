@@ -1,0 +1,79 @@
+generated: '2026-08-14'
+method: searched
+source: https://status.naics.com/
+docs: https://www.naics.com/business-intelligence-api/bizapi-documents/
+versioning:
+  scheme: uri-path
+  current: v2
+  current_base: https://www.naics.com/wp-json/naicsapi/v2
+  previous: v1
+  previous_base: https://www.naics.com/wp-json/naicsapi/v1
+  docs: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+  document_version: 2.0.0.1
+  document_updated: '2021-09-01'
+  note: >-
+    Version lives in the WordPress REST namespace segment. Both /wp-json/naicsapi/v1 and
+    /wp-json/naicsapi/v2 return a live route index (HTTP 200) and both are separately
+    monitored on the provider's status page.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  formal_policy: false
+  legacy_notice:
+    version: v1
+    source: https://status.naics.com/
+    text: >-
+      "BizAPI V1 Legacy API Solution (anyone who connected to the API before 2019 is likely
+      using this solution. We recommend upgrading to V2.)"
+    note: >-
+      This is a recommendation published on the status page, not a deprecation policy. No
+      sunset date, no RFC 8594 Sunset/Deprecation headers, and no migration guide were found.
+      V1 remains operational and is still listed as a monitored service.
+sla:
+  url: null
+  uptime_target: null
+  note: >-
+    No published SLA or uptime commitment was found. The status page reports observed uptime
+    per service but states no contractual target.
+status_page:
+  url: https://status.naics.com/
+  provider: Better Stack
+  http_status: 200
+  fetched: '2026-08-14'
+  scope: NAICS Association, LLC
+  services:
+    - name: BizAPI V1
+      label: >-
+        Legacy API Solution (anyone who connected to the API before 2019 is likely using this
+        solution. We recommend upgrading to V2.)
+      state: Operational
+      uptime_90d: 100%
+    - name: BizAPI V2
+      state: Operational
+  features: [per-service uptime history, previous incidents, subscribe/get in touch]
+support:
+  email: APICloudSolutions@NAICS.com
+  phone: 973-625-5626
+  contact_page: https://www.naics.com/contact-us/
+deprecated_operations: []
+notes:
+  - >-
+    The provider publishes no dated changelog or release-notes feed; version history is only
+    inferable from the PDF cover pages. See changelog/bizapi-changelog.yml.
+  - >-
+    DEFECT IN THIS REPO'S SPEC, recorded 2026-08-14. Both provider PDFs — BizAPI
+    Documentation v3.0.1.1 (2020-08-12, covering /naicsapi/v1) and BizAPI V2 Documentation
+    v2.0.0.1 (2021-09-01, covering /naicsapi/v2) — publish the request body as companyName,
+    address, city, state, postalCode, country, phone, duns, url, and the response as a
+    three-block envelope of "Search Terms" / "Matching Data" / "Appended Data".
+    openapi/bizapi-company-search-api-openapi.yml in this repo instead declares company_name,
+    street, zip and a flat response of duns_number/company_name/sic_code_4/... Those names
+    appear in no provider document and do not match the provider-published Postman collection
+    either. The spec predates this enrichment pass and was not harvested from the provider.
+    It is left unmutated per pipeline rule; the corrections are captured as an OpenAPI Overlay
+    at overlays/bizapi-company-search-api-overlay.yaml and should be folded into a re-harvested
+    spec before the next scoring run.
+  - >-
+    The document version numbers are documentation versions, not API versions: the V1 manual
+    is labelled 3.0.1.1 and the V2 manual 2.0.0.1. Do not read them as a version sequence.

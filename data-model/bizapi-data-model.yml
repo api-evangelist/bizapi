@@ -1,0 +1,125 @@
+generated: '2026-08-14'
+method: derived
+source: openapi/bizapi-company-search-api-openapi.yml
+enriched_from: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+summary: >-
+  BizAPI has one entity — the business establishment — and its whole data model is that entity
+  pointing at other instances of itself through DUNS-number reference fields. There are no
+  sub-resources, no ids the caller creates, and no writes. The interesting structure is the
+  corporate family tree: every appended record carries up to four DUNS references (parent/HQ,
+  domestic ultimate, global ultimate, plus its own) and a hierarchy code that positions it in
+  the tree.
+entities:
+  - name: Establishment
+    description: >-
+      A single business location as recorded in the D&B business database. This is the only
+      entity the API returns.
+    primary_key:
+      field: 'DUNS #'
+      alias_in_spec: duns_number
+      format: nine-digit D-U-N-S, published with hyphens (10-223-5004) or bare (102235004)
+      note: >-
+        The provider accepts both hyphenated and unhyphenated DUNS on input and echoes back the
+        form used. There is no other stable identifier.
+    identity_fields: ['DUNS #', Company Name, Secondary Business Name]
+    location_fields: [Street Address, City, State/Province, ZIP Code, Country, Phone, URL]
+    classification_fields:
+      - {field: NAICS 1 Code, standard: NAICS, digits: 6}
+      - {field: NAICS 2 Code, standard: NAICS, digits: 6}
+      - {field: 4 Digit SIC 1, standard: SIC, digits: 4}
+      - {field: 4 Digit SIC 2, standard: SIC, digits: 4}
+      - {field: 8 Digit SIC 1, standard: SIC, digits: 8}
+      - {field: 8 Digit SIC 2, standard: SIC, digits: 8}
+      - {field: Line of Business, standard: free text}
+    size_fields: [Employees on Site, Employees Total, Sales Volume in US$, Year Started]
+    contact_fields: [CEO Title, CEO First Name, CEO Last Name, CEO Name]
+    structural_fields:
+      - {field: Location Type, values: [Headquarters, Branch, Single Location]}
+      - {field: Subsidiary Indicator, meaning: 'whether the record is 51%+ owned by a parent'}
+      - {field: Global Ult Indicator, meaning: whether this record is itself the global ultimate}
+      - {field: Hierarchy Code, meaning: 'two-digit depth in the family tree; global ultimates are 01, a subsidiary is one greater than its parent, a branch equals its headquarters'}
+      - {field: '# Of Family Members', meaning: 'total records in the family tree including the global ultimate, all subsidiaries and all branch locations'}
+    conditional_nulls: >-
+      "Year Started, Total Employees and Annual Sales information will be blank for Branch
+      locations. This information is only reported at the Headquarter Location to prevent
+      confusion and the doubling of stats." An agent reading size figures must check
+      Location Type first.
+relationships:
+  - from: Establishment
+    to: Establishment
+    type: belongs_to
+    role: parent
+    via: 'Parent Ult DUNS #'
+    also: [HQ/Parent Ult Bus. Name, HQ/Parent State/Province, HQ/Parent Country]
+    note: >-
+      If the appended record is a headquarters or single location, these fields describe the
+      parent company owning more than 50%. If the appended record is a branch, they describe
+      the headquarters the branch reports to. Same fields, two different meanings, switched by
+      Location Type.
+  - from: Establishment
+    to: Establishment
+    type: belongs_to
+    role: headquarters
+    via: 'HQ Ult DUNS #'
+    note: >-
+      Populated instead of Parent Ult DUNS # depending on Location Type.
+  - from: Establishment
+    to: Establishment
+    type: belongs_to
+    role: domestic_ultimate
+    via: 'Domestic Ult DUNS #'
+    also: [Domestic Ult Name, Domestic Ult State/Province, Domestic Ult Country]
+    note: >-
+      Highest family member in the same country as the appended record. A record may be its own
+      domestic ultimate.
+  - from: Establishment
+    to: Establishment
+    type: belongs_to
+    role: global_ultimate
+    via: 'Global Ult DUNS #'
+    also: [Global Ult Bus. Name, Global Ult State/Province, Global Ult Country]
+    note: >-
+      Highest family member in the corporate tree regardless of country. A record may be its own
+      global ultimate, flagged by Global Ult Indicator.
+  - from: Establishment
+    to: Establishment
+    type: has_many
+    role: family_members
+    via: '# Of Family Members'
+    cardinality_only: true
+    note: >-
+      Only the COUNT is returned, never the list. There is no endpoint that expands a family
+      tree. The documented workaround is to re-query: "To gain Company Size Details of the
+      Global Ult, submit a request based on the Global Ult DUNS #" — one billable call per hop.
+  - from: Establishment
+    to: NAICSCode
+    type: has_many
+    via: [NAICS 1 Code, NAICS 2 Code]
+    max: 2
+  - from: Establishment
+    to: SICCode
+    type: has_many
+    via: [4 Digit SIC 1, 4 Digit SIC 2, 8 Digit SIC 1, 8 Digit SIC 2]
+    max: 4
+reference_entities:
+  - name: NAICSCode
+    description: North American Industry Classification System code, 6 digits, with a description string.
+    external_reference: https://www.naics.com/everything-naics/
+  - name: SICCode
+    description: Standard Industrial Classification code, 4 or 8 digits, with a description string.
+    external_reference: https://www.naics.com/everything-sic/
+projections:
+  note: >-
+    The Establishment entity is never returned whole. Each account is bound to one Record
+    Layout that selects a fixed subset of fields — the layout is a projection of the single
+    entity, not a different entity. See plans/bizapi-plans-pricing.yml#price_tiers.
+  layouts: [NA, TA, EA, SA, PA, PL]
+envelope:
+  note: >-
+    The entity arrives inside the "Appended Data" block. "Search Terms" echoes the caller's
+    input and "Matching Data" carries match quality metadata, neither of which is part of the
+    entity. See conventions/bizapi-conventions.yml#response_envelope.
+writes:
+  supported: false
+  note: The API is read-only. No create, update or delete operation exists.
+subway: null

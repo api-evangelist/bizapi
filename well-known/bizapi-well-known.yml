@@ -1,0 +1,67 @@
+generated: '2026-08-14'
+method: probed
+source: live GET of the /.well-known/ discovery surface on every host in apis.yml and openapi servers[]
+host: https://www.naics.com
+hosts_probed:
+  - www.naics.com   # apis.yml Website, Documentation, and the OpenAPI servers[] host
+result: none
+note: >-
+  Every probed path returned HTTP 404. The 404 bodies are the site's WordPress themed
+  not-found page (text/html, ~192KB, identical length across all paths), not a document — so
+  none of these is a soft-200 false positive either. NO WellKnown or SecurityTxt pointer is
+  emitted in apis.yml: this file records a verified ABSENCE, not a surface the provider serves.
+documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    content_type: text/html
+    file: null
+related_discovery:
+  note: >-
+    BizAPI serves no RFC 8615 well-known surface, but it does expose a machine-readable route
+    index through the WordPress REST API, which is the only automated discovery this provider
+    offers. Both namespaces answer anonymously.
+  endpoints:
+    - url: https://www.naics.com/wp-json/naicsapi/v1
+      status: 200
+      content_type: application/json
+      routes: 8
+      note: >-
+        Lists /cosearch, /cosearchtest, /naicskeywordsearch, /sickeywordsearch and four
+        sharehookcallback* routes. Route args are largely empty, so this is an endpoint
+        inventory, not a parameter contract.
+    - url: https://www.naics.com/wp-json/naicsapi/v2
+      status: 200
+      content_type: application/json
+      routes: 4
+      note: Lists /cosearch, /cosearchtest and /cosearchMLXPtest.
+    - url: https://www.naics.com/wp-json/naicsapi/v3
+      status: 404
+      content_type: application/json

@@ -1,0 +1,96 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  registry.npmjs.org search, pypi.org/pypi JSON API, api.github.com user search, and the
+  provider docs at https://www.naics.com/business-intelligence-api/bizapi-documents/
+package_count: 0
+official_package_count: 0
+packages: []
+summary: >-
+  NAICS Association ships no client libraries for BizAPI in any package registry, and has no
+  GitHub organization. What it publishes instead is copy-paste sample code embedded in the PDF
+  manual (PHP, ASP, JavaScript with jQuery) plus a Postman collection — useful, but not
+  installable, not versioned, and not dependency-managed.
+registries_searched:
+  - registry: npm
+    query: ['naics', 'bizapi', 'naics-api']
+    endpoint: https://registry.npmjs.org/-/v1/search
+    first_party_hits: 0
+    note: >-
+      All hits are third-party NAICS code datasets or utilities (naics, naicsjs,
+      naics-sic-crosswalk, @easysolutions906/naics-api, naics-2007, naics-2012, verisnaics).
+      None is published by NAICS Association and none calls the BizAPI endpoints.
+  - registry: pypi
+    query: ['naics', 'bizapi', 'naics-api', 'pynaics']
+    endpoint: https://pypi.org/pypi/<name>/json
+    first_party_hits: 0
+    note: >-
+      pypi.org/project/naics is "Gray Alien Ventures" 2022 NAICS classification utilities;
+      pypi.org/project/BizAPI is an unrelated toy web framework by Turdibek Jumabaev. Both are
+      name collisions. naics-api and pynaics return 404.
+  - registry: github
+    query: 'naics association'
+    endpoint: https://api.github.com/search/users
+    first_party_hits: 0
+    note: total_count 0. No NAICS Association GitHub organization exists.
+  - registry: rubygems
+    first_party_hits: 0
+  - registry: packagist
+    first_party_hits: 0
+  - registry: nuget
+    first_party_hits: 0
+  - registry: maven-central
+    first_party_hits: 0
+  - registry: crates.io
+    first_party_hits: 0
+  - registry: pkg.go.dev
+    first_party_hits: 0
+provider_published_code:
+  note: >-
+    Not packages — these are the only first-party client assets BizAPI ships. Neither carries a
+    version or a published date beyond the manual's own cover date, so neither can be used as
+    a currency signal.
+  assets:
+    - kind: code-sample
+      language: php
+      location: 'BizAPI V2 Documentation section 3.1'
+      url: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+      version: null
+      published: '2021-09-01'
+      note: cURL + base64_encode Basic auth against /wp-json/naicsapi/v2/cosearch.
+    - kind: code-sample
+      language: asp
+      location: 'BizAPI V2 Documentation section 3.2'
+      url: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+      version: null
+      published: '2021-09-01'
+    - kind: code-sample
+      language: javascript
+      location: 'BizAPI V2 Documentation section 3.3'
+      url: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+      version: null
+      published: '2021-09-01'
+      note: Written against jQuery.
+    - kind: postman-collection
+      name: NAICS BizAPI V2 Client Examples
+      url: https://www.naics.com/wp-content/uploads/2021/09/NAICS-BizAPI-V2-Examples.postman_collection.json_.zip
+      registry: cdn
+      version: null
+      published: '2021-08-16'
+      note: >-
+        Distributed as a zipped JSON download from the provider's own wp-content uploads path,
+        not from a Postman public workspace, so there is no registry metadata endpoint to
+        query. version is null because the collection carries no version field; published is
+        the Last-Modified date of the file inside the archive. Postman collection schema
+        v2.1.0, 18 requests across 3 folders.
+    - kind: data-dictionary
+      name: BizAPI Data Dictionary
+      url: https://www.naics.com/wp-content/uploads/2020/07/BizAPI-Data-Dictionary.xlsx
+      registry: cdn
+      version: null
+      published: '2020-07-01'
+      note: Published date inferred from the wp-content upload path (2020/07); the file states no version.
+gaps:
+  - No first-party SDK in any language.
+  - No GitHub organization, so no source-available client, no issue tracker, no example repo.
+  - The newest first-party client asset is the 2021 Postman collection; nothing has shipped in the five years since.

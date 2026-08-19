@@ -1,0 +1,125 @@
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+docs: https://www.naics.com/business-intelligence-api/bizapi-documents/
+format: bespoke-json
+note: >-
+  BizAPI does not use RFC 9457 application/problem+json. Section 1.2 "Response" of the
+  BizAPI V2 Documentation (v2.0.0.1, updated 09/01/2021) publishes an explicit HTTP status
+  code table with verbatim error strings; those strings are captured below exactly as the
+  provider publishes them. Errors are returned as JSON, per section 1.0: "All request and
+  response bodies, including errors, will be encoded in JSON."
+envelope:
+  content_type: application/json
+  note: >-
+    The provider documents the status codes and the literal message text but does not
+    publish a named error-body schema. A successful (200) response that yields no match is
+    NOT an error: it returns the normal three-part envelope with
+    "Appended Data": {"Message": "No match found"}.
+  no_match_sentinel:
+    status: 200
+    path: Appended Data.Message
+    value: No match found
+problems:
+  - status: 400
+    title: Bad Request
+    detail: >-
+      No valid search terms submitted. Must have at least one of "companyName", "duns",
+      "url", or "phone".
+    cause: Request body omitted every field the matching engine can key on.
+    remediation: >-
+      Include at least one of companyName, duns, url or phone in the POST body. See the six
+      documented match methods (DUNS, Standard, Loose, URL, Name, Phone).
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+  - status: 400
+    title: Bad Request
+    detail: 'Missing field: layout'
+    cause: >-
+      The record layout was not established on the API account. Layout is set at credential
+      activation, not per request.
+    remediation: >-
+      Provider-side account configuration issue. The documentation instructs the caller to
+      "tell your NAICS API Contact" — this is not client-correctable.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+  - status: 401
+    title: Unauthorized
+    detail: Credentials are Missing or Invalid.
+    cause: Absent or wrong HTTP Basic credentials.
+    remediation: >-
+      Send the Authorization: Basic header built from the username and password issued at
+      account activation. Spaces inside the issued password are significant and must be kept.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+  - status: 403
+    title: Forbidden
+    detail: >-
+      Request not submitted due to lack of searches. Contact apicloudsolutions@naics.com or
+      call 973-625-5626 to purchase more searches.
+    cause: >-
+      The account's prepaid match credits are exhausted. The "Matches Remaining" field in
+      the Matching Data block of every successful response counts down to zero.
+    remediation: >-
+      Monitor Matching Data."Matches Remaining" and top up before it reaches 0 by contacting
+      apicloudsolutions@naics.com or 973-625-5626.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+  - status: 429
+    title: Too Many Requests
+    detail: Too many requests. Please limit your requests to 3 per second
+    cause: More than 3 requests were made in a rolling second.
+    remediation: >-
+      Throttle to 3 requests per rolling second. A temporary boost for a large project can be
+      requested from the API Account contact or APICloudSolutions@NAICS.com. No Retry-After
+      or RateLimit-* response header is documented.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+  - status: 500
+    title: Internal Server Error
+    detail: Internal Server Error
+    cause: Server-side failure.
+    remediation: Retry with backoff; escalate to APICloudSolutions@NAICS.com if persistent.
+    source_operation: openapi/bizapi-company-search-api-openapi.yml#searchCompanies
+diagnostic_fields:
+  note: >-
+    Rather than error subcodes, BizAPI publishes a Matching Data block on every successful
+    response that explains WHY an append did or did not produce useful data. These are the
+    provider's real diagnostic vocabulary and are documented in section 2.0.
+  fields:
+    - name: Request ID
+      description: Unique number sequence per request; retain it so the provider can reconcile tracking.
+    - name: Layout
+      description: Which record layout the account is established with.
+      values:
+        - {code: NA, meaning: NAICS & SIC}
+        - {code: TA, meaning: Telemarketing}
+        - {code: EA, meaning: ETM w/Emp}
+        - {code: SA, meaning: ETM w/Sales}
+        - {code: PA, meaning: Prospect}
+        - {code: PL, meaning: Prospect w/Linkage}
+    - name: Matches Remaining
+      description: Unused credits left on the account. At 0 the API returns 403.
+    - name: Match Method
+      description: Which of the six match methodologies fired.
+      values: [DUNS Match, Standard Match, Loose Match, URL Match, Name Match, Phone Match]
+    - name: Match Grade
+      description: >-
+        7-letter string, one letter per input element in order — Company Name, Street Address
+        Number, Street Name, City, State, PO Box, Telephone.
+      values:
+        - {code: A, meaning: 'Same (ABC WIDGET MFG vs. ABC Widgeting MFG)'}
+        - {code: B, meaning: 'Similar (ABC Widget MFG vs. ABC MFG)'}
+        - {code: F, meaning: 'Different (ABC Widget MFG vs. XYZ MFG)'}
+        - {code: Z, meaning: 'Null — one or both are blank'}
+      note: DUNS, URL and Phone matches do not return a Match Grade.
+    - name: Confidence Code
+      description: >-
+        0-10 strength of match. DUNS, URL and Phone matches always return 10. Loose and Name
+        matches always return 8. Standard matches return 7 or higher. Records scoring 6 or
+        lower are not returned at all — no appended information is provided.
+    - name: BEMFAB
+      description: Marketability indicator for the appended record.
+      values:
+        - {code: '', meaning: Marketability is undefined}
+        - {code: M, meaning: Matched to Marketable Record File}
+        - {code: A, meaning: 'D&B numbered record flagged as undeliverable; industry will be appended'}
+        - {code: D, meaning: 'De-listed at the customer request; cannot market to company but can append industry code'}
+        - {code: O, meaning: Unconfirmed record or confirmed as out of business}
+    - name: 'DUNS #'
+      description: D&B D-U-N-S nine-digit business identifier for the matched record.

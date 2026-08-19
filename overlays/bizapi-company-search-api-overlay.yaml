@@ -1,0 +1,154 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for BizAPI Company Search API
+  version: 1.1.0
+extends: openapi/bizapi-company-search-api-openapi.yml
+x-generated: '2026-08-14'
+x-method: generated
+x-source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+x-note: >-
+  Two kinds of action below. The first block records API Evangelist metadata and the runtime
+  semantics harvested from the provider's PDF manual. The second block, marked
+  x-correction, records where the underlying spec disagrees with what NAICS Association
+  actually publishes — the spec was authored before this enrichment pass and was never
+  harvested from the provider. Per pipeline rule the OpenAPI is not mutated; these actions are
+  the auditable record of what a re-harvest must fix. See lifecycle/bizapi-lifecycle.yml#notes.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-enriched: '2026-08-14'
+      x-apievangelist-artifacts:
+        conventions: conventions/bizapi-conventions.yml
+        errors: errors/bizapi-problem-types.yml
+        sandbox: sandbox/bizapi-sandbox.yml
+        authentication: authentication/bizapi-authentication.yml
+        rate_limits: rate-limits/bizapi-rate-limits.yml
+        lifecycle: lifecycle/bizapi-lifecycle.yml
+        data_model: data-model/bizapi-data-model.yml
+        plans: plans/bizapi-plans-pricing.yml
+      x-data-provenance:
+        upstream: Dun & Bradstreet business database
+        note: >-
+          BizAPI redistributes D&B records. The BEMFAB field carries D&B suppression semantics
+          that bind the downstream consumer.
+      x-idempotency:
+        supported: false
+        note: >-
+          No idempotency key. Every successful match is billable, so a retry is a duplicate
+          charge.
+
+  - target: $.info
+    update:
+      x-correction: >-
+        info.version is '1.0'. The provider's current published surface is v2 at
+        https://www.naics.com/wp-json/naicsapi/v2, documented in BizAPI V2 Documentation
+        v2.0.0.1 (2021-09-01). The v1 namespace this spec describes is labelled
+        "Legacy API Solution" on the provider status page.
+
+  - target: $.servers
+    update:
+      x-correction: >-
+        The spec declares only https://www.naics.com/wp-json/naicsapi/v1. Both namespaces are
+        live and return HTTP 200 route indexes as of 2026-08-14; the provider recommends v2.
+        A re-harvest should add https://www.naics.com/wp-json/naicsapi/v2 as the primary
+        server and demote v1 to a legacy server entry.
+
+  - target: $.components.schemas.CompanySearchRequest
+    update:
+      x-correction: >-
+        FIELD NAMES DO NOT MATCH THE PROVIDER. Both the BizAPI v1 manual (v3.0.1.1, 2020-08-12)
+        and the V2 manual (v2.0.0.1, 2021-09-01), and the provider-published Postman collection
+        NAICS BizAPI V2 Client Examples, all use camelCase - companyName, address, city, state,
+        postalCode, country, phone - plus duns and url. This schema declares company_name,
+        street and zip, which appear in no provider document, and omits duns entirely even
+        though DUNS Match is the provider's most precise match method.
+      x-provider-published-fields:
+        - {name: companyName, type: string, note: Exactly one company name.}
+        - {name: address, type: string, note: Street address OR a PO Box, not both.}
+        - {name: city, type: string}
+        - {name: state, type: string}
+        - {name: postalCode, type: string}
+        - {name: country, type: string}
+        - {name: phone, type: string, note: Digits only, no extensions, no separators.}
+        - {name: duns, type: string, note: 'Nine digits, hyphenated or bare. Must be sent alone or DUNS Match will not trigger.'}
+        - {name: url, type: string, note: 'US records only. Must be sent alone or URL Match will not trigger.'}
+      x-additional-properties: >-
+        Callers may add arbitrary non-PII passthrough fields (the manual's example is
+        "Client#") which are echoed back in the Search Terms block for correlation. The schema
+        should allow additionalProperties.
+      x-match-methods:
+        - {rank: 1, name: DUNS Match, keys: [duns], exclusive: true, confidence: 10}
+        - {rank: 2, name: Standard Match, keys: [companyName, address, city, state, postalCode, country, phone], confidence: '7+'}
+        - {rank: 3, name: Loose Match, keys: [companyName, state], confidence: 8}
+        - {rank: 4, name: URL Match, keys: [url], exclusive: true, confidence: 10}
+        - {rank: 5, name: Name Match, keys: [companyName, country], confidence: 8}
+        - {rank: 6, name: Phone Match, keys: [phone], exclusive: true, confidence: 10}
+
+  - target: $.components.schemas.CompanySearchResponse
+    update:
+      x-correction: >-
+        RESPONSE SHAPE DOES NOT MATCH THE PROVIDER. This schema is a flat object. The provider
+        returns a three-block envelope on every 200 - "Search Terms" (echo of input plus
+        passthrough fields), "Matching Data" (Request ID, Layout, Matches Remaining, Match
+        Method, Match Grade, Confidence Code, BEMFAB, DUNS #) and "Appended Data" (the matched
+        record, shaped by the account Record Layout). Field labels inside Appended Data are
+        human-readable strings with spaces - "Company Name", "Sales Volume in US$",
+        "Global Ult DUNS #", "# of Family Members" - not the snake_case names declared here.
+      x-soft-failure: >-
+        A no-match is HTTP 200 with "Appended Data": {"Message": "No match found"}. There is no
+        404. Consumers keying off status codes will read a miss as a hit.
+      x-layout-variance: >-
+        Which Appended Data fields are present is fixed by the account Record Layout
+        (NA/TA/EA/SA/PA/PL), echoed as Matching Data.Layout. One spec cannot describe all six
+        without oneOf or a layout discriminator.
+
+  - target: $.paths['/cosearch'].post
+    update:
+      x-billable: true
+      x-billing-unit: successfully matched listing
+      x-credit-signal: Matching Data."Matches Remaining"
+      x-idempotent: false
+      x-rate-limit:
+        limit: 3
+        window: rolling second
+        status: 429
+        message: Too many requests. Please limit your requests to 3 per second
+        headers: []
+      x-agent-guidance: >-
+        Prefer /cosearchtest while developing. This operation decrements a prepaid credit
+        balance on every successful match and cannot be safely retried.
+
+  - target: $.paths['/cosearch'].post.responses
+    update:
+      x-correction: >-
+        The spec declares 200, 401 and 429. The provider also documents 400 twice with distinct
+        messages ("No valid search terms submitted. Must have at least one of companyName,
+        duns, url, or phone" and "Missing field: layout"), 403 for credit exhaustion, and 500.
+        See errors/bizapi-problem-types.yml for the full catalog with verbatim strings.
+
+  - target: $.paths['/cosearchtest'].post
+    update:
+      x-sandbox: true
+      x-billable: false
+      x-fixture-company: Westrock Mwv, LLC
+      x-failure-trigger: >-
+        Include the string "bad" in any input field to force a no-match response. Substring
+        matches count - "Carlsbad" triggers it too.
+      x-agent-guidance: >-
+        Safe to call freely. Same credentials as live; only the path differs.
+
+  - target: $.paths['/cosearchtest'].post.responses
+    update:
+      x-correction: >-
+        The spec declares 200 and 401. The sandbox shares the live endpoint's error contract,
+        so 400, 429 and 500 apply here as well.
+
+  - target: $.components.securitySchemes.basicAuth
+    update:
+      x-credential-gotcha: >-
+        Spaces inside the issued password are significant and must be preserved through
+        base64 encoding.
+      x-issuance: >-
+        Manual. Credentials are issued by NAICS Association at account activation; there is no
+        self-serve key console, no rotation and no revocation endpoint.
+      x-shared-with-sandbox: true

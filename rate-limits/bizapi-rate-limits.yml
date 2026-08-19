@@ -4,7 +4,15 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: BizAPI
 providerId: bizapi
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-08-14'
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+docs: https://www.naics.com/business-intelligence-api/bizapi-documents/
+# 2026-08-14: replaced the 2026-05-04 bulk-sweep scaffold (roadmap#35) with the provider's
+# published limit. The scaffold asserted free/professional/enterprise tiers at 10/100/1000
+# requests per minute with X-RateLimit-* headers — none of which BizAPI publishes or returns.
+# The real contract is a single flat throughput ceiling plus a prepaid credit balance.
 tags:
   - Business Intelligence
   - Company Data
@@ -14,77 +22,89 @@ tags:
   - SIC
   - Rate Limiting
   - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the BizAPI API surface. Captures per-tier quotas,
-  burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to be replaced
-  with published provider limits.
+description: >-
+  Published rate limiting for the BizAPI Business Intelligence API. BizAPI enforces one flat
+  throughput ceiling that is not tier-differentiated, and separately meters a prepaid balance
+  of successful matches ("credits"). Exhausting throughput returns 429; exhausting credits
+  returns 403.
+limit_count: 2
 headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
+  limit: null
+  remaining: null
+  reset: null
+  retryAfter: null
+  policy: null
+  note: >-
+    No rate-limit response headers are documented and none are named anywhere in the V1 or V2
+    manuals or the provider Postman collection. The only runtime quota signal BizAPI returns
+    is in the response body: Matching Data."Matches Remaining", the count of unused credits,
+    present on every successful response. An agent cannot read a throughput budget at all, and
+    can read the credit budget only from a 200 body.
 responseCodes:
   throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
+  quotaExceeded: 403
 limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
+  - name: Request throughput
+    scope: per-account
+    metric: requests_per_second
+    limit: 3
+    window: rolling second
+    timeFrame: second
+    burst: null
+    tier: all
+    status_on_exhaustion: 429
+    message: Too many requests. Please limit your requests to 3 per second
+    quote: >-
+      "A maximum of 3 Requests can be made per rolling second. If you need this temporarily
+      boosted for a large project, please reach out to your API Account contact or
+      APICloudSolutions@NAICS.com for support."
+    boostable: true
+    boost_contact: APICloudSolutions@NAICS.com
     applies:
-      - BizAPI Business Intelligence API
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
+      - BizAPI Company Search API
+  - name: Prepaid match credits
+    scope: per-account
+    metric: successful_matches
+    limit: null
+    window: account balance
+    timeFrame: null
+    tier: all
+    status_on_exhaustion: 403
+    message: >-
+      Request not submitted due to lack of searches. Contact apicloudsolutions@naics.com or
+      call 973-625-5626 to purchase more searches.
+    runtime_signal: Matching Data."Matches Remaining"
+    quote: >-
+      "Matches Remaining indicates how many Unused Credits you have remaining in your account.
+      When this number reaches 0, you will no longer be able to submit new requests."
+    note: >-
+      The credit ceiling is negotiated per account and is not published, so limit is null — an
+      honest unknown, not zero. Billing is match-based: "You are only charged for Successfully
+      Matched Listings."
     applies:
-      - BizAPI Business Intelligence API
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - BizAPI Business Intelligence API
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - BizAPI Business Intelligence API
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - BizAPI Business Intelligence API
+      - BizAPI Company Search API
 policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+  - name: Throughput boost
+    description: >-
+      A temporary increase above 3 requests per rolling second can be requested for a large
+      project from the API account contact or APICloudSolutions@NAICS.com. No self-serve
+      mechanism is published.
+  - name: Backoff
+    description: >-
+      No provider backoff guidance and no Retry-After header. Callers must implement their own
+      client-side pacing at or below 3 requests per rolling second.
+  - name: Credit top-up
+    description: >-
+      Credits are replenished by contacting the NAICS representative, APICloudSolutions@naics.com
+      or 973-625-5626, referencing the API account and the number of additional credits wanted.
+  - name: Batch
+    description: >-
+      No batch endpoint. "We intend to offer Batch upload solutions via API down the road,
+      however, we can assist with any large projects that arise in the interim."
+gaps:
+  - No rate-limit response headers of any kind.
+  - No Retry-After on 429.
+  - Throughput limit is not tier-differentiated and not self-serve adjustable.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

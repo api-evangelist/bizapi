@@ -1,0 +1,105 @@
+generated: '2026-08-14'
+method: searched
+source: https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf
+docs: https://www.naics.com/business-intelligence-api/bizapi-documents/
+summary: >-
+  BizAPI ships a real, credit-free sandbox: a dedicated /cosearchtest endpoint that mirrors
+  the live /cosearch contract but returns fabricated append results without consuming account
+  credits, plus a hosted browser test console that needs no code. Section 1.3 "Test Endpoint
+  (Sandbox) for the BizAPI Service" of the BizAPI V2 Documentation (v2.0.0.1, 09/01/2021) is
+  the source. Every value below is published by the provider verbatim; nothing is invented.
+test_live_separation:
+  model: separate-endpoint
+  note: >-
+    There are no separate test-mode credentials or key prefixes. The SAME HTTP Basic
+    credentials authenticate both the live and the sandbox endpoint — the endpoint path is
+    what selects test mode. "The Sandbox requires basic authentication just like the live
+    endpoint."
+  live_endpoint: https://www.naics.com/wp-json/naicsapi/v2/cosearch
+  test_endpoint: https://www.naics.com/wp-json/naicsapi/v2/cosearchtest
+  legacy_live_endpoint: https://www.naics.com/wp-json/naicsapi/v1/cosearch
+  legacy_test_endpoint: https://www.naics.com/wp-json/naicsapi/v1/cosearchtest
+  credits_consumed: false
+  credit_note: >-
+    "A Test Endpoint has been created to allow Users to submit fake responses for testing
+    with Third Party Applications without having to consume existing credits."
+hosted_console:
+  url: https://www.naics.com/naics-api-test-V2/
+  http_status: 200
+  requires_credentials: true
+  note: >-
+    "You can test the API service without doing any coding. Just go to this link, enter your
+    credentials and fill the form with the Company record data. When submitted, you will see
+    the JSON result of your request."
+postman_collection:
+  name: NAICS BizAPI V2 Client Examples
+  url: https://www.naics.com/wp-content/uploads/2021/09/NAICS-BizAPI-V2-Examples.postman_collection.json_.zip
+  schema: https://schema.getpostman.com/json/collection/v2.1.0/collection.json
+  http_status: 200
+  folders:
+    - name: V2 - Search Methods
+      requests: 6
+    - name: V2 - Sandbox - Good Searches
+      requests: 6
+    - name: V2 - Sandbox - Bad Searches
+      requests: 6
+  note: >-
+    Provider-published collection covering all six match methods against the live endpoint and
+    the same six against the sandbox in both success and failure form. Credentials are left
+    blank for the user to fill in.
+magic_values:
+  note: >-
+    The sandbox recognises a single fixture company. "To Yield a Successful append result, the
+    POST body can reflect any of the Input field combinations below (no need to fill the
+    Fields with Real Company Data) to yield a successful match."
+  success_fixture:
+    company: Westrock Mwv, LLC
+    by_match_method:
+      - method: DUNS Match
+        body: {duns: '10-223-5004'}
+      - method: Standard Match
+        body:
+          companyName: Westrock Mwv, LLC
+          address: 501 S 5TH St
+          city: Richmond
+          state: VA
+          postalCode: '23219'
+          country: US
+          phone: '8044441000'
+      - method: Loose Match
+        body:
+          companyName: Westrock Mwv, LLC
+          address: ''
+          city: ''
+          state: VA
+          postalCode: ''
+          country: US
+          phone: '8044441000'
+      - method: Name Match
+        body: {companyName: Westrock Mwv, LLC}
+      - method: URL Match
+        body: {url: www.westrock.com}
+      - method: Phone Match
+        body: {phone: '8044441000'}
+  failure_trigger:
+    rule: >-
+      "To Yield an Unsuccessful append result, the POST body must contain the word 'bad' in
+      any of the input fields. The Unsuccessful Response will be in the same format as in the
+      Live Endpoint. If 'bad' appears inside of a word (for example Carlsbad Market), this
+      will also trigger an Unsuccessful append result."
+    examples:
+      - {duns: bad}
+      - {companyName: bad, address: 501 S 5TH St, city: Richmond, state: VA, postalCode: '23219', country: US, phone: '8044441000'}
+      - {companyName: bad, address: '', city: '', state: VA, postalCode: '23219', country: US, phone: '9999999999'}
+      - {companyName: bad}
+      - {URL: bad}
+      - {phone: bad}
+    yields:
+      status: 200
+      body_fragment: {Appended Data: {Message: No match found}}
+time_simulation: null
+fixture_tooling: null
+gaps:
+  - No test-mode credential or key prefix; the same secret is used against live and sandbox.
+  - Only one fixture company is published, so match-grade and confidence-code variation cannot be exercised in the sandbox.
+  - No time simulation, no trigger/fixture API, no way to simulate 403 credit exhaustion or 429 throttling.
