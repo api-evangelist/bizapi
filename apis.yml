@@ -32,7 +32,7 @@ access: 3rd-Party
 created: '2025-02-24'
 modified: '2026-08-14'
 position: Consuming
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: bizapi:bizapi-company-search-api
   name: BizAPI Company Search API
