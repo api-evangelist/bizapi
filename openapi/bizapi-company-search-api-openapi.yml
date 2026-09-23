@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: BizAPI Business Intelligence Company Search API
   description: Real-time REST API from the NAICS Association that returns firmographic data on over 220 million US and international business entities including DUNS numbers, SIC codes, NAICS codes, company details, and corporate hierarchy information.
@@ -163,41 +163,6 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
-    CompanySearchRequest:
-      type: object
-      properties:
-        company_name:
-          type: string
-          description: Name of the company to search for
-          example: Acme Corporation
-        street:
-          type: string
-          description: Street address
-          example: 123 Main Street
-        city:
-          type: string
-          description: City name
-          example: San Francisco
-        state:
-          type: string
-          description: State or province
-          example: CA
-        zip:
-          type: string
-          description: ZIP or postal code
-          example: '94105'
-        country:
-          type: string
-          description: Country name or code
-          example: US
-        phone:
-          type: string
-          description: Phone number
-          example: +1-555-555-0100
-        url:
-          type: string
-          description: Company website URL
-          example: https://example.com
     CompanySearchResponse:
       type: object
       properties:
@@ -317,6 +282,41 @@ components:
           type: string
           description: Number of family members in corporate hierarchy
           example: '3'
+    CompanySearchRequest:
+      type: object
+      properties:
+        company_name:
+          type: string
+          description: Name of the company to search for
+          example: Acme Corporation
+        street:
+          type: string
+          description: Street address
+          example: 123 Main Street
+        city:
+          type: string
+          description: City name
+          example: San Francisco
+        state:
+          type: string
+          description: State or province
+          example: CA
+        zip:
+          type: string
+          description: ZIP or postal code
+          example: '94105'
+        country:
+          type: string
+          description: Country name or code
+          example: US
+        phone:
+          type: string
+          description: Phone number
+          example: +1-555-555-0100
+        url:
+          type: string
+          description: Company website URL
+          example: https://example.com
   securitySchemes:
     basicAuth:
       type: http
