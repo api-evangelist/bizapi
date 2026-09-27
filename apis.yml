@@ -49,35 +49,20 @@ modified: '2026-08-14'
 position: Consuming
 specificationVersion: '0.23'
 apis:
-- aid: bizapi:bizapi-company-search-api
-  name: BizAPI Company Search API
-  description: >-
-    Real-time business data append API. Submit a partial business record — company name and
-    address, phone, website or DUNS number — and BizAPI matches it against the Dun & Bradstreet
-    business database, returning NAICS and SIC classification codes, address and contact data,
-    employee and sales figures, and the corporate family tree. One POST operation plus a
-    credit-free sandbox twin, HTTP Basic auth, billed per successful match.
-  humanURL: https://www.naics.com/business-intelligence-api/
-  baseURL: https://www.naics.com/wp-json/naicsapi/v1
+- aid: bizapi:naics-com-website-wordpress-rest
+  name: BizAPI Website (WordPress REST)
+  description: 'The public WordPress REST API (wp-json) of the BizAPI website at www.naics.com: the route
+    index of the site''s content management system, catalogued as one site surface rather than as separate
+    APIs.'
+  baseURL: https://www.naics.com/wp-json
   tags:
-  - Company Search
+  - WordPress
+  x-surface: platform-generated
   properties:
-  - type: OpenAPI
-    url: openapi/bizapi-company-search-api-openapi.yml
   - type: Documentation
-    url: https://www.naics.com/business-intelligence-api/
-  - type: JSONSchema
-    url: json-schema/bizapi-company-schema.json
-  - type: JSONStructure
-    url: json-structure/bizapi-company-structure.json
-  - type: JSONLD
-    url: json-ld/bizapi-context.jsonld
-  - type: Examples
-    url: examples/bizapi-company-example.json
-  - type: Overlay
-    url: overlays/bizapi-company-search-api-overlay.yaml
-  - type: DataModel
-    url: data-model/bizapi-data-model.yml
+    url: https://www.naics.com/wp-json
+  x-platform: wordpress
+  x-platform-surface: rest
 common:
   - type: AgenticAccess
     url: agentic-access/bizapi-agentic-access.yml
@@ -175,6 +160,16 @@ common:
         description: Append industry classification and company size data to Marketo lead records for segmentation and scoring.
       - name: Microsoft Dynamics
         description: Connect BizAPI to Dynamics 365 to surface firmographic context on accounts and contacts.
+  - type: JSONSchema
+    url: json-schema/bizapi-company-schema.json
+  - type: JSONStructure
+    url: json-structure/bizapi-company-structure.json
+  - type: JSONLD
+    url: json-ld/bizapi-context.jsonld
+  - type: Examples
+    url: examples/bizapi-company-example.json
+  - type: DataModel
+    url: data-model/bizapi-data-model.yml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
