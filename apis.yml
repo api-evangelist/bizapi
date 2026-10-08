@@ -64,6 +64,8 @@ apis:
   x-platform: wordpress
   x-platform-surface: rest
 common:
+  - type: FinOps
+    url: finops/bizapi-finops.yml
   - type: AgenticAccess
     url: agentic-access/bizapi-agentic-access.yml
   - type: DomainSecurity
