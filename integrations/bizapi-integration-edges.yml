@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/bizapi/integrations
+- https://n8n.io/integrations/bizapi/
+- https://composio.dev/toolkits/bizapi
+- https://monid.ai/tools/bizapi
+checked:
+- https://composio.dev/toolkits/bizapi
+- https://monid.ai/tools/bizapi
+- https://n8n.io/integrations/bizapi/
+- https://zapier.com/apps/bizapi/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
