@@ -1,4 +1,4 @@
-# BizAPI (bizapi)
+# BizAPI
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,67 +66,165 @@
 
 BizAPI is a real-time Business Intelligence API from the NAICS Association that provides firmographic data on over 220 million US and international business entities. It enables businesses to enrich CRM records, power customer acquisition workflows, and append NAICS codes, SIC codes, DUNS numbers, company details, sales volume, employee counts, and corporate hierarchy information to any business record via a simple REST API.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/bizapi/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/bizapi/refs/heads/main/apis.yml)
+**Areas:** Business Intelligence · Company Data · CRM · Firmographic Data · NAICS · SIC
 
-## Scope
+## BizAPI on APIs.io
 
-- **Position:** Consuming
-- **Access:** 3rd-Party
+Everything profiled for BizAPI is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/bizapi/](https://apis.io/providers/bizapi/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (1)
 
-- Business Intelligence
-- Company Data
-- CRM
-- Firmographic Data
-- NAICS
-- SIC
+- [BizAPI Website (WordPress REST)](https://apis.io/apis/bizapi/naics-com-website-wordpress-rest/) — The public WordPress REST API (wp-json) of the BizAPI website at www.naics.com: the route index of the site's content management system, catalogued as one…
 
-## Timestamps
+### Published properties
 
-- **Created:** 2025-02-24
-- **Modified:** 2026-05-19
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### MCP servers (1)
 
-### BizAPI Business Intelligence API
+Model Context Protocol servers that expose the API to agents.
 
-Real-time REST API from the NAICS Association that returns firmographic data on over 220 million US and international business locations. Provides DUNS numbers, SIC codes, NAICS codes, company details, contact information, sales volume, employee counts, and corporate hierarchy. Supports both live production and test (sandbox) endpoints. Rate limited to 3 requests per rolling second. Authentication via HTTP Basic with credentials provided at account activation.
+- [bizapi](https://apis.io/servers/bizapi/bizapi/)
 
-- **Human URL:** [https://www.naics.com/business-intelligence-api/](https://www.naics.com/business-intelligence-api/)
+#### Agentic access (1)
 
-#### Tags
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- Business Intelligence
-- Company Data
-- Firmographic Data
-- NAICS
-- SIC
+- [Bizapi Agentic Access](https://apis.io/agentic-access/bizapi/bizapi-agentic-access/)
 
-#### Properties
+#### JSON Schema (1)
 
-- [Documentation](https://www.naics.com/business-intelligence-api/)
-- [OpenAPI](openapi/bizapi-business-intelligence-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/bizapi-business-intelligence-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/bizapi-business-intelligence-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-- [JSON Schema](json-schema/bizapi-company-schema.json) — [JSON Schema](https://json-schema.org/specification)
-- [JSON Structure](json-structure/bizapi-company-structure.json)
-- [JSON-LD](json-ld/bizapi-context.jsonld) — [JSON-LD](https://www.w3.org/TR/json-ld11/)
-- [Example](examples/bizapi-company-example.json)
+The data models the API reads and writes.
 
-## Common Properties
+- [BizAPI Company](https://apis.io/schemas/bizapi/bizapi-company/)
+
+#### JSON Structure (1)
+
+Data models expressed in JSON Structure.
+
+- [Bizapi Company Structure](https://apis.io/json-structure/bizapi/bizapi-company-structure/)
+
+#### JSON-LD (1)
+
+Linked-data contexts for the provider's vocabulary.
+
+- [Bizapi Context](https://apis.io/jsonld/bizapi/bizapi-context/)
+
+#### Vocabulary (1)
+
+The provider's domain terms, defined.
+
+- [Bizapi Vocabulary](https://apis.io/vocabularies/bizapi/bizapi-vocabulary/)
+
+#### Examples (1)
+
+Example requests and responses.
+
+- [Bizapi Company Example](https://apis.io/examples/bizapi/bizapi-company-example/)
+
+#### Collections (2)
+
+Postman and Open Collection request collections.
+
+- [BizAPI Business Intelligence API](https://apis.io/collections/bizapi/open-bizapi-business-intelligence-api/)
+- [Moved to /providers/bizapi/](https://apis.io/collections/bizapi/open-bizapi-company-search-api/)
+
+#### Governance rules (2)
+
+Spectral rulesets for the provider's contracts.
+
+- [BizAPI — jsonschema rules](https://apis.io/rules/bizapi/bizapi-jsonschema-spectral-rules/)
+- [BizAPI API Rules](https://apis.io/rules/bizapi/bizapi-spectral-rules/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Bizapi Authentication](https://apis.io/security/bizapi/bizapi-authentication/)
+- [Bizapi Domain Security](https://apis.io/security/bizapi/bizapi-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Bizapi Plans Pricing](https://apis.io/plans/bizapi/bizapi-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Bizapi Rate Limits](https://apis.io/rate-limits/bizapi/bizapi-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Bizapi Finops](https://apis.io/finops/bizapi/bizapi-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://www.naics.com/)
 - [Documentation](https://www.naics.com/business-intelligence-api/)
-- [Sign Up](https://www.naics.com/bizapi-details/)
-- [Authentication](https://www.naics.com/business-intelligence-api/)
-- [Spectral Rules](rules/bizapi-spectral-rules.yml)
-- [Vocabulary](vocabulary/bizapi-vocabulary.yaml)
-- [Features](undefined)
-- [Use Cases](undefined)
-- [Integrations](undefined)
+- [Getting started](https://www.naics.com/business-intelligence-api/bizapi-documents/)
+- [API reference](https://www.naics.com/wp-content/uploads/2021/09/BizAPI-V2-Documentation.pdf)
+- [Pricing](https://www.naics.com/data-layouts-pricing/)
+- [Sign up](https://www.naics.com/bizapi-details/)
+- [Support](https://www.naics.com/contact-us/)
+- [Blog](https://www.naics.com/feed/)
+- [Privacy policy](https://www.naics.com/privacypolicy/)
+- [Status](https://status.naics.com/)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 38.7** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 57.1 |
+| Contract quality | 17.2 |
+| Contract governance | 31.8 |
+| Operational transparency | 28.9 |
+| Developer ergonomics | 70.8 |
+| Access clarity | 34.2 |
+
+**Agent readiness 11.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | documented (partial credit) |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 20.6** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/bizapi/](https://apis.io/providers/bizapi/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for BizAPI: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/bizapi/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
